@@ -7,9 +7,10 @@ public enum Weight {
     FOUR(4),
     FIVE(5);
 
-   Integer decimal;
+    Integer decimal;
 
     Weight(Integer decimal) {
         this.decimal = decimal;
     }
+
 }

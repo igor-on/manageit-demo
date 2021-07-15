@@ -1,7 +1,7 @@
 package com.in.demo.manage.manageit.controller;
 
-import com.in.demo.manage.manageit.model.Project;
-import com.in.demo.manage.manageit.service.ProjectService;
+import com.in.demo.manage.manageit.model.Task;
+import com.in.demo.manage.manageit.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,15 +13,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/api")
 @RequiredArgsConstructor
-public class ProjectController {
+public class TaskController {
 
-    private final ProjectService service;
+    private final TaskService service;
 
-    @PostMapping("/projects")
-    public ResponseEntity<Project> createProject(@RequestBody Project project) {
-        Project createdProject = service.saveProject(project);
+    @PostMapping("/tasks")
+    public ResponseEntity<Task> createTask(@RequestBody Task task ) {
+        Task createdTask = service.saveTask(task);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(createdProject);
+                .body(createdTask);
     }
 }
