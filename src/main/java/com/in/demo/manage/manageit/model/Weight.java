@@ -12,5 +12,4 @@ public enum Weight {
     Weight(Integer decimal) {
         this.decimal = decimal;
     }
-
 }

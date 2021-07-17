@@ -1,27 +1,65 @@
 package com.in.demo.manage.manageit.controller;
 
+import com.in.demo.manage.manageit.model.Progress;
 import com.in.demo.manage.manageit.model.Task;
+import com.in.demo.manage.manageit.model.Weight;
 import com.in.demo.manage.manageit.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
-@RequestMapping("/api")
+@RequestMapping("/api/tasks")
 @RequiredArgsConstructor
 public class TaskController {
 
     private final TaskService service;
 
-    @PostMapping("/tasks")
-    public ResponseEntity<Task> createTask(@RequestBody Task task ) {
-        Task createdTask = service.saveTask(task);
+    @GetMapping()
+    public ResponseEntity<List<Task>> getAllTasks() {
+        List<Task> allTasks = service.getAllTasks();
+        return ResponseEntity.ok(allTasks);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
+        Task foundTask = service.getTaskById(id);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(foundTask);
+    }
+
+    @PostMapping()
+    public ResponseEntity<Task> createTask(@RequestBody Task task) {
+        task.setName("task");
+        task.setDescription("tasktask");
+        task.setStoryPoints(2);
+        task.setWeight(Weight.ONE);
+        task.setProgress(Progress.IN_PROGRESS);
+        //      /*  task.setSprint(sprintService.getSprintById(sprintId)); */
+        Task createdTask = service.addNewTask(task);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(createdTask);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> removeTask(@PathVariable Long id) {
+        service.deleteTask(id);
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Task> updateTask(@PathVariable Long id, @RequestBody Task task) {
+        Task updatedTask = service.updateTask(id, task);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(updatedTask);
     }
 }

@@ -6,22 +6,52 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
-@RequestMapping("/api")
+@RequestMapping("/api/projects")
 @RequiredArgsConstructor
 public class ProjectController {
 
     private final ProjectService service;
 
-    @PostMapping("/projects")
+    @GetMapping()
+    public ResponseEntity<List<Project>> getAllProjects() {
+        List<Project> allProjects = service.getAllProjects();
+        return ResponseEntity.ok(allProjects);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Project> getProjectById(@PathVariable Long id) {
+        Project foundProject = service.getProjectById(id);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(foundProject);
+    }
+
+    @PostMapping()
     public ResponseEntity<Project> createProject(@RequestBody Project project) {
-        Project createdProject = service.saveProject(project);
+        Project createdProject = service.addNewProject(project);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(createdProject);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> removeProject(@PathVariable Long id) {
+        service.deleteProject(id);
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Project> updateProject(@PathVariable Long id, @RequestBody Project project) {
+        Project updatedProject = service.updateProject(id, project);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(updatedProject);
     }
 }
