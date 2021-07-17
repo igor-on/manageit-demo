@@ -1,13 +1,11 @@
 package com.in.demo.manage.manageit.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
-
-import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 
 import javax.persistence.*;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Size;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -24,15 +22,14 @@ public class Sprint {
     @NotBlank(message = "Sprint must have a name")
     @Size(min = 3, max = 55, message = "Sprint name has to be between 3 and 55 characters long")
     private String name;
-    @PastOrPresent
     private LocalDateTime startDate;
     @Future
     private LocalDateTime endDate;
+    @JsonIgnoreProperties(value = {"sprint"})
     @OneToMany(mappedBy = "sprint")
     private List<Task> tasks;
 
     public Sprint() {
-        startDate = new Jsr310JpaConverters.LocalDateTimeConverter().convertToEntityAttribute(Date.from(Instant.now()));
         tasks = new ArrayList<>();
     }
 }

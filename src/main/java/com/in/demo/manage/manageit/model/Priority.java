@@ -1,6 +1,6 @@
 package com.in.demo.manage.manageit.model;
 
-public enum Weight {
+public enum Priority {
     ONE(1),
     TWO(2),
     THREE(3),
@@ -9,7 +9,7 @@ public enum Weight {
 
     Integer decimal;
 
-    Weight(Integer decimal) {
+    Priority(Integer decimal) {
         this.decimal = decimal;
     }
 }

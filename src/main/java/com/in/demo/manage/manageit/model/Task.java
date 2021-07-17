@@ -2,6 +2,7 @@ package com.in.demo.manage.manageit.model;
 
 import lombok.NoArgsConstructor;
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -11,6 +12,7 @@ import javax.validation.constraints.Size;
 @Table(name = "tasks")
 @NoArgsConstructor
 @Data
+@ToString(exclude = {"sprint"})
 public class Task {
 
     @Id
@@ -24,10 +26,10 @@ public class Task {
     private Integer storyPoints;
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "ENUM('TO_DO', 'IN_PROGRESS', 'DONE')")
-    private Progress progress; // todo ------- może TaskState? (tylko trzeba by to edytować tez w tableach w DB)
-    @Enumerated(EnumType.STRING)
+    private Progress progress;
+    @Enumerated(EnumType.ORDINAL)
     @Column(columnDefinition = "ENUM('1', '2', '3', '4', '5')")
-    private Weight weight;  // todo ------- może TaskWeight? (tylko trzeba by to edytować tez w tableach w DB)
+    private Priority priority;
     @ManyToOne
     private Sprint sprint;
 }

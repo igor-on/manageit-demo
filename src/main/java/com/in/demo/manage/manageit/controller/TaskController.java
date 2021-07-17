@@ -1,8 +1,6 @@
 package com.in.demo.manage.manageit.controller;
 
-import com.in.demo.manage.manageit.model.Progress;
 import com.in.demo.manage.manageit.model.Task;
-import com.in.demo.manage.manageit.model.Weight;
 import com.in.demo.manage.manageit.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,7 +19,7 @@ public class TaskController {
 
     @GetMapping()
     public ResponseEntity<List<Task>> getAllTasks() {
-        List<Task> allTasks = service.getAllTasks();
+        List<Task> allTasks = service.findAllTasks();
         return ResponseEntity.ok(allTasks);
     }
 
@@ -35,12 +33,6 @@ public class TaskController {
 
     @PostMapping()
     public ResponseEntity<Task> createTask(@RequestBody Task task) {
-        task.setName("task");
-        task.setDescription("tasktask");
-        task.setStoryPoints(2);
-        task.setWeight(Weight.ONE);
-        task.setProgress(Progress.IN_PROGRESS);
-        //      /*  task.setSprint(sprintService.getSprintById(sprintId)); */
         Task createdTask = service.addNewTask(task);
         return ResponseEntity
                 .status(HttpStatus.CREATED)

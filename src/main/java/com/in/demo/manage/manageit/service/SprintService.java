@@ -1,8 +1,6 @@
 package com.in.demo.manage.manageit.service;
 
-import com.in.demo.manage.manageit.model.Progress;
 import com.in.demo.manage.manageit.model.Sprint;
-import com.in.demo.manage.manageit.model.Weight;
 import com.in.demo.manage.manageit.repository.SprintRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,7 +13,7 @@ public class SprintService {
 
     private final SprintRepository repository;
 
-    public List<Sprint> getAllSprints() {
+    public List<Sprint> findAllSprints() {
         return repository.findAll();
     }
 
@@ -34,9 +32,9 @@ public class SprintService {
     public Sprint updateSprint(Long id, Sprint sprint) {
         Sprint updatedSprint = getSprintById(id);
         updatedSprint.setName(sprint.getName());
-//        updatedSprint.setStartDate(sprint.getStartDate());  // TODO   --- zbędne?
-//        updatedSprint.setEndDate(sprint.getEndDate());
-//        updatedSprint.setTasks(sprint.getTasks());
+        updatedSprint.setStartDate(sprint.getStartDate());
+        updatedSprint.setEndDate(sprint.getEndDate());
+        updatedSprint.setTasks(sprint.getTasks());
         return updatedSprint;
     }
 }

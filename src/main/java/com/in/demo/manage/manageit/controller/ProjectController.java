@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-@RequestMapping("/api/projects")
+@RequestMapping("/api/v1/projects")
 @RequiredArgsConstructor
 public class ProjectController {
 
@@ -19,7 +19,7 @@ public class ProjectController {
 
     @GetMapping()
     public ResponseEntity<List<Project>> getAllProjects() {
-        List<Project> allProjects = service.getAllProjects();
+        List<Project> allProjects = service.findAllProjects();
         return ResponseEntity.ok(allProjects);
     }
 
@@ -47,9 +47,9 @@ public class ProjectController {
                 .build();
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Project> updateProject(@PathVariable Long id, @RequestBody Project project) {
-        Project updatedProject = service.updateProject(id, project);
+    @PutMapping()
+    public ResponseEntity<Project> updateProject(@RequestBody Project project) {
+        Project updatedProject = service.updateProject(project);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(updatedProject);

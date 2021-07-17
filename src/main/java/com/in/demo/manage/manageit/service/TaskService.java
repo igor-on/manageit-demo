@@ -1,8 +1,7 @@
 package com.in.demo.manage.manageit.service;
 
-import com.in.demo.manage.manageit.model.Progress;
+import com.in.demo.manage.manageit.model.Sprint;
 import com.in.demo.manage.manageit.model.Task;
-import com.in.demo.manage.manageit.model.Weight;
 import com.in.demo.manage.manageit.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,16 +15,8 @@ public class TaskService {
     private final SprintService sprintService;
     private final TaskRepository repository;
 
-    public List<Task> getAllTasks() {     // TODO --------------------zbędne??
+    public List<Task> findAllTasks() {
         return repository.findAll();
-    }
-
-    // TODO --------------------zmieniłem z Set na List, nie sadze, ze moglyby sie powtorzyc,
-    //  a wydaje mi sie, ze z listami wiecej mozna podzialac
-    //  (w zaleznosci od potrzeb oczywiscie),
-    //  no ale popraw mnie jesli miales jakis wyzszy cel w tym Secie
-    public List<Task> getAllTasksFromSprint(Long sprintId) {
-        return sprintService.getSprintById(sprintId).getTasks();
     }
 
     public Task getTaskById(Long id) {
@@ -36,7 +27,13 @@ public class TaskService {
         repository.deleteById(id);
     }
 
-    public Task addNewTask(Task task /*, Long sprintId*/) {
+    public Task addNewTask(Task task) {
+
+        //Zadbanie o odpowiednia relacje ze Sprintem
+        Sprint relatedSprint = sprintService.getSprintById(task.getSprint().getId());
+        relatedSprint.getTasks().add(task);
+        task.setSprint(relatedSprint);
+
         return repository.save(task);
     }
 
@@ -44,8 +41,8 @@ public class TaskService {
         Task updatedTask = getTaskById(id);
         updatedTask.setName(task.getName());
         updatedTask.setDescription(task.getDescription());
-//        updatedTask.setStoryPoints(task.getStoryPoints()); // TODO   --- co rozni TaskWeight od StoryPoints?
-//        updatedTask.setTaskWeight(task.getTaskWeight());
-        return updatedTask; // TODO   ---  nie jestem pewien czy nie powinno byc tez repository.save.updatedTask, ale nie zdazylem sprawdzic
+        updatedTask.setStoryPoints(task.getStoryPoints());
+        updatedTask.setPriority(task.getPriority());
+        return updatedTask;
     }
 }

@@ -17,6 +17,7 @@ public class GlobalErrorHandler {
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Error handleValidationException(ConstraintViolationException e) {
+        //TODO zastanowić sie nad najlepszym i najbardziej optymalnym rozwiazaniem(czy z @Valid czy bez)
         Optional<ConstraintViolation<?>> constraintViolation = e.getConstraintViolations().stream().findFirst();
         return new Error(constraintViolation.get().getMessage(), LocalDateTime.now(Clock.systemUTC()), HttpStatus.BAD_REQUEST.value());
     }

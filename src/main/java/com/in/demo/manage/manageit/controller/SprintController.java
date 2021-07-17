@@ -19,7 +19,7 @@ public class SprintController {
 
     @GetMapping()
     public ResponseEntity<List<Sprint>> getAllSprints() {
-        List<Sprint> allSprints = service.getAllSprints();
+        List<Sprint> allSprints = service.findAllSprints();
         return ResponseEntity.ok(allSprints);
     }
 
@@ -32,9 +32,9 @@ public class SprintController {
     }
 
     @PostMapping()
-    // TODO ------------------------ Nie wiem czy używać @Valid, fajnie się łapie te wyjątki w GlobalErrorHandler
     public ResponseEntity<Sprint> createSprint(@RequestBody Sprint sprint) {
         Sprint createdSprint = service.addNewSprint(sprint);
+
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(createdSprint);

@@ -5,6 +5,7 @@ import com.in.demo.manage.manageit.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -13,7 +14,7 @@ public class ProjectService {
 
     private final ProjectRepository repository;
 
-    public List<Project> getAllProjects() {
+    public List<Project> findAllProjects() {
         return repository.findAll();
     }
 
@@ -29,8 +30,9 @@ public class ProjectService {
         repository.deleteById(id);
     }
 
-    public Project updateProject(Long id, Project project) {
-        Project updatedProject = getProjectById(id);
+    @Transactional
+    public Project updateProject(Project project) {
+        Project updatedProject = getProjectById(project.getId());
         updatedProject.setName(project.getName());
         updatedProject.setDescription(project.getDescription());
         return updatedProject;
