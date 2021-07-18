@@ -49,9 +49,8 @@ public class SprintController {
     }
 
     @PutMapping("/{id}")
-    //TODO usunąć @PathVariable
-    public ResponseEntity<Sprint> updateSprint(@PathVariable Long id, @RequestBody Sprint sprint) {
-        Sprint updatedSprint = service.updateSprint(id, sprint);
+    public ResponseEntity<Sprint> updateSprint(@RequestBody Sprint sprint) {
+        Sprint updatedSprint = service.updateSprint(sprint);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(updatedSprint);

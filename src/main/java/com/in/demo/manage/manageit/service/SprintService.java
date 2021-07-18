@@ -29,8 +29,8 @@ public class SprintService {
         repository.deleteById(id);
     }
 
-    public Sprint updateSprint(Long id, Sprint sprint) {
-        Sprint updatedSprint = getSprintById(id);
+    public Sprint updateSprint(Sprint sprint) {
+        Sprint updatedSprint = getSprintById(sprint.getId());
         updatedSprint.setName(sprint.getName());
         updatedSprint.setStartDate(sprint.getStartDate());
         updatedSprint.setEndDate(sprint.getEndDate());
