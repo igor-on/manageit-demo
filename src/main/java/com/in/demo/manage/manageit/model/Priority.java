@@ -1,5 +1,8 @@
 package com.in.demo.manage.manageit.model;
 
+import lombok.Getter;
+
+@Getter
 public enum Priority {
     ONE(1),
     TWO(2),
