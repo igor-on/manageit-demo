@@ -1,5 +1,6 @@
 package com.in.demo.manage.manageit.controller;
 
+import com.in.demo.manage.manageit.error.NotFoundException;
 import com.in.demo.manage.manageit.model.Task;
 import com.in.demo.manage.manageit.service.TaskService;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,7 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
+    public ResponseEntity<Task> getTaskById(@PathVariable Long id) throws NotFoundException {
         Task foundTask = service.getTaskById(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -32,7 +33,7 @@ public class TaskController {
     }
 
     @PostMapping()
-    public ResponseEntity<Task> createTask(@RequestBody Task task) {
+    public ResponseEntity<Task> createTask(@RequestBody Task task) throws NotFoundException {
         Task createdTask = service.addNewTask(task);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -48,7 +49,7 @@ public class TaskController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Task> updateTask(@RequestBody Task task) {
+    public ResponseEntity<Task> updateTask(@RequestBody Task task) throws NotFoundException {
         Task updatedTask = service.updateTask(task);
         return ResponseEntity
                 .status(HttpStatus.OK)

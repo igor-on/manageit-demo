@@ -1,5 +1,6 @@
 package com.in.demo.manage.manageit.controller;
 
+import com.in.demo.manage.manageit.error.NotFoundException;
 import com.in.demo.manage.manageit.model.Sprint;
 import com.in.demo.manage.manageit.service.SprintService;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,7 @@ public class SprintController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Sprint> getSprintById(@PathVariable Long id) {
+    public ResponseEntity<Sprint> getSprintById(@PathVariable Long id) throws NotFoundException {
         Sprint foundSprint = service.getSprintById(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -49,7 +50,7 @@ public class SprintController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Sprint> updateSprint(@RequestBody Sprint sprint) {
+    public ResponseEntity<Sprint> updateSprint(@RequestBody Sprint sprint) throws NotFoundException {
         Sprint updatedSprint = service.updateSprint(sprint);
         return ResponseEntity
                 .status(HttpStatus.OK)

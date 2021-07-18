@@ -1,5 +1,6 @@
 package com.in.demo.manage.manageit.service;
 
+import com.in.demo.manage.manageit.error.NotFoundException;
 import com.in.demo.manage.manageit.model.Sprint;
 import com.in.demo.manage.manageit.model.Task;
 import com.in.demo.manage.manageit.repository.TaskRepository;
@@ -19,15 +20,15 @@ public class TaskService {
         return repository.findAll();
     }
 
-    public Task getTaskById(Long id) {
-        return repository.findById(id).orElseThrow();  // TODO --- jakis konkretny new Error pewnie?
+    public Task getTaskById(Long id) throws NotFoundException {
+        return repository.findById(id).orElseThrow(() -> new NotFoundException("There is no task with this " + id));
     }
 
     public void deleteTask(Long id) {
         repository.deleteById(id);
     }
 
-    public Task addNewTask(Task task) {
+    public Task addNewTask(Task task) throws NotFoundException {
 
         //Zadbanie o odpowiednia relacje ze Sprintem
         Sprint relatedSprint = sprintService.getSprintById(task.getSprint().getId());
@@ -37,7 +38,7 @@ public class TaskService {
         return repository.save(task);
     }
 
-    public Task updateTask(Task task) {
+    public Task updateTask(Task task) throws NotFoundException {
         Task updatedTask = getTaskById(task.getId());
         updatedTask.setName(task.getName());
         updatedTask.setDescription(task.getDescription());
