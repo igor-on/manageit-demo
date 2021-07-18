@@ -1,6 +1,8 @@
 package com.in.demo.manage.manageit.controller;
 
+import com.in.demo.manage.manageit.mapper.TaskMapper;
 import com.in.demo.manage.manageit.model.Task;
+import com.in.demo.manage.manageit.model.dto.TaskDTO;
 import com.in.demo.manage.manageit.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/api/v1/tasks")
@@ -18,25 +21,30 @@ public class TaskController {
     private final TaskService service;
 
     @GetMapping()
-    public ResponseEntity<List<Task>> getAllTasks() {
+    public ResponseEntity<List<TaskDTO>> getAllTasks() {
         List<Task> allTasks = service.findAllTasks();
-        return ResponseEntity.ok(allTasks);
+
+        List<TaskDTO> dtos = allTasks.stream()
+                .map(TaskMapper::mapToTaskDTO)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(dtos);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
+    public ResponseEntity<TaskDTO> getTaskById(@PathVariable Long id) {
         Task foundTask = service.getTaskById(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(foundTask);
+                .body(TaskMapper.mapToTaskDTO(foundTask));
     }
 
     @PostMapping()
-    public ResponseEntity<Task> createTask(@RequestBody Task task) {
+    public ResponseEntity<TaskDTO> createTask(@RequestBody Task task) {
         Task createdTask = service.addNewTask(task);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(createdTask);
+                .body(TaskMapper.mapToTaskDTO(createdTask));
     }
 
     @DeleteMapping("/{id}")
@@ -48,10 +56,10 @@ public class TaskController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Task> updateTask(@RequestBody Task task) {
+    public ResponseEntity<TaskDTO> updateTask(@RequestBody Task task) {
         Task updatedTask = service.updateTask(task);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(updatedTask);
+                .body(TaskMapper.mapToTaskDTO(updatedTask));
     }
 }
