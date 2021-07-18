@@ -30,6 +30,11 @@ public class TaskService {
 
     public Task addNewTask(Task task) throws NotFoundException {
 
+
+        if(task.getId() != null) {
+            throw new IllegalArgumentException("HEJHEJEH");
+        }
+
         //Zadbanie o odpowiednia relacje ze Sprintem
         Sprint relatedSprint = sprintService.getSprintById(task.getSprint().getId());
         relatedSprint.getTasks().add(task);

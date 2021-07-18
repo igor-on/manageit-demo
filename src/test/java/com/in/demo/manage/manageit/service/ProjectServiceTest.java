@@ -3,61 +3,86 @@ package com.in.demo.manage.manageit.service;
 import com.in.demo.manage.manageit.error.NotFoundException;
 import com.in.demo.manage.manageit.model.Project;
 import com.in.demo.manage.manageit.repository.ProjectRepository;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static com.in.demo.manage.manageit.service.data.DataForServicesTests.generateSampleProject;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class ProjectServiceTest {
+
+    @Mock
+    private ProjectRepository repository;
 
     @InjectMocks
     ProjectService service;
 
-//    @MockBean
-    @Mock
-    private ProjectRepository repository;
-
-    @BeforeEach
-    void init() {
-        service = new ProjectService(repository);
-    }
-
     @Test
     void findAllProjects() {
+        Project p1 = generateSampleProject();
+        Project p2 = generateSampleProject();
+        when(repository.findAll()).thenReturn(List.of(p1, p2));
+
+        List<Project> actual = service.findAllProjects();
+
+        assertThat(actual)
+                .hasSize(2)
+                .containsExactly(p1, p2)
+                .doesNotContainNull();
+
+        assertThat(actual.get(0))
+                .isEqualTo(p1);
     }
 
     @Test
-    void getProjectById_WhenNotExist() {
-//        var project = new Project();
-//        project.setId(1000L);
-//        when(repository.findById(1000L)).thenReturn(Optional.of(project));
-//        assertThrows(NotFoundException.class, () -> service.getProjectById().findById(project.getId()));
+    void testGetProjectById() throws NotFoundException {
+        Project p1 = generateSampleProject();
+        when(repository.findById(1L)).thenReturn(Optional.of(p1));
+
+        Project actual = service.getProjectById(1L);
+
+        assertThat(actual).isEqualTo(p1);
+    }
+
+    @Test
+    public void thatGetProjectByIdThrowsNotFoundException() {
+        when(repository.findById(anyLong())).thenReturn(Optional.empty());
+
+        Throwable throwable = Assertions.assertThrows(NotFoundException.class, () -> service.getProjectById(anyLong()));
+
+        assertThat(throwable).isExactlyInstanceOf(NotFoundException.class);
     }
 
     @Test
     void addNewProject() {
         var project = new Project();
-        when(repository.save(project)).thenReturn(project);
-        var id = service.addNewProject(project);
-        assertEquals(project.getId(), id);
-    }
+        project.setDescription("ss");
+        project.setName("ss");
+        when(repository.save(any())).thenReturn(project);
 
-    @Test
-    void deleteProject() {
-    }
+        Project actual = service.addNewProject(project);
 
-    @Test
-    void updateProject() {
+        assertEquals(actual.getName(), project.getName());
+        assertEquals(actual.getDescription(), project.getDescription());
     }
+//
+//    @Test
+//    void deleteProject() {
+//    }
+//
+//    @Test
+//    void updateProject() {
+//    }
 }
