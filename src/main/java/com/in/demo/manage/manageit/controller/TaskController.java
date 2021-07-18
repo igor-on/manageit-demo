@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-@RequestMapping("/api/tasks")
+@RequestMapping("/api/v1/tasks")
 @RequiredArgsConstructor
 public class TaskController {
 
@@ -48,8 +48,8 @@ public class TaskController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Task> updateTask(@PathVariable Long id, @RequestBody Task task) {
-        Task updatedTask = service.updateTask(id, task);
+    public ResponseEntity<Task> updateTask(@RequestBody Task task) {
+        Task updatedTask = service.updateTask(task);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(updatedTask);

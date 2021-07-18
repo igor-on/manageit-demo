@@ -37,8 +37,8 @@ public class TaskService {
         return repository.save(task);
     }
 
-    public Task updateTask(Long id, Task task) {
-        Task updatedTask = getTaskById(id);
+    public Task updateTask(Task task) {
+        Task updatedTask = getTaskById(task.getId());
         updatedTask.setName(task.getName());
         updatedTask.setDescription(task.getDescription());
         updatedTask.setStoryPoints(task.getStoryPoints());

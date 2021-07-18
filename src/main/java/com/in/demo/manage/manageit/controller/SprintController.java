@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-@RequestMapping("/api/sprints")
+@RequestMapping("/api/v1/sprints")
 @RequiredArgsConstructor
 public class SprintController {
 
@@ -49,6 +49,7 @@ public class SprintController {
     }
 
     @PutMapping("/{id}")
+    //TODO usunąć @PathVariable
     public ResponseEntity<Sprint> updateSprint(@PathVariable Long id, @RequestBody Sprint sprint) {
         Sprint updatedSprint = service.updateSprint(id, sprint);
         return ResponseEntity
