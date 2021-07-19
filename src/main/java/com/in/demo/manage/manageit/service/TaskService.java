@@ -32,6 +32,7 @@ public class TaskService {
         //Zadbanie o odpowiednia relacje ze Sprintem
         Sprint relatedSprint = sprintService.getSprintById(task.getSprint().getId());
         relatedSprint.getTasks().add(task);
+        relatedSprint.setStoryPointsToSpend(relatedSprint.getStoryPointsToSpend() - task.getStoryPoints());
         task.setSprint(relatedSprint);
 
         return repository.save(task);
