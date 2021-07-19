@@ -21,4 +21,10 @@ public class GlobalErrorHandler {
         Optional<ConstraintViolation<?>> constraintViolation = e.getConstraintViolations().stream().findFirst();
         return new Error(constraintViolation.get().getMessage(), LocalDateTime.now(Clock.systemUTC()), HttpStatus.BAD_REQUEST.value());
     }
+
+    @ExceptionHandler(DataNotFoundException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Error handleException(DataNotFoundException e) {
+        return new Error(e.getMessage(), LocalDateTime.now(Clock.systemUTC()), HttpStatus.BAD_REQUEST.value());
+    }
 }

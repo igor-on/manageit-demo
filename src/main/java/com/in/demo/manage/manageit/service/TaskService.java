@@ -1,6 +1,6 @@
 package com.in.demo.manage.manageit.service;
 
-import com.in.demo.manage.manageit.error.NotFoundException;
+import com.in.demo.manage.manageit.error.DataNotFoundException;
 import com.in.demo.manage.manageit.model.Sprint;
 import com.in.demo.manage.manageit.model.Task;
 import com.in.demo.manage.manageit.repository.TaskRepository;
@@ -20,15 +20,15 @@ public class TaskService {
         return repository.findAll();
     }
 
-    public Task getTaskById(Long id) throws NotFoundException {
-        return repository.findById(id).orElseThrow(() -> new NotFoundException("There is no task with this " + id));
+    public Task getTaskById(Long id) throws DataNotFoundException {
+        return repository.findById(id).orElseThrow(() -> new DataNotFoundException("There is no task with this id " + id));
     }
 
     public void deleteTask(Long id) {
         repository.deleteById(id);
     }
 
-    public Task addNewTask(Task task) throws NotFoundException {
+    public Task addNewTask(Task task) throws DataNotFoundException {
 
 
         if(task.getId() != null) {
@@ -43,7 +43,7 @@ public class TaskService {
         return repository.save(task);
     }
 
-    public Task updateTask(Task task) throws NotFoundException {
+    public Task updateTask(Task task) throws DataNotFoundException {
         Task updatedTask = getTaskById(task.getId());
         updatedTask.setName(task.getName());
         updatedTask.setDescription(task.getDescription());

@@ -1,6 +1,6 @@
 package com.in.demo.manage.manageit.controller;
 
-import com.in.demo.manage.manageit.error.NotFoundException;
+import com.in.demo.manage.manageit.error.DataNotFoundException;
 import com.in.demo.manage.manageit.model.Project;
 import com.in.demo.manage.manageit.service.ProjectService;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class ProjectController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Project> getProjectById(@PathVariable Long id) throws NotFoundException {
+    public ResponseEntity<Project> getProjectById(@PathVariable Long id) throws DataNotFoundException {
         Project foundProject = service.getProjectById(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -49,7 +49,7 @@ public class ProjectController {
     }
 
     @PutMapping()
-    public ResponseEntity<Project> updateProject(@RequestBody Project project) throws NotFoundException {
+    public ResponseEntity<Project> updateProject(@RequestBody Project project) throws DataNotFoundException {
         Project updatedProject = service.updateProject(project);
         return ResponseEntity
                 .status(HttpStatus.OK)

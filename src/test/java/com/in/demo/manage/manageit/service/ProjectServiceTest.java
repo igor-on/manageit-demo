@@ -1,6 +1,6 @@
 package com.in.demo.manage.manageit.service;
 
-import com.in.demo.manage.manageit.error.NotFoundException;
+import com.in.demo.manage.manageit.error.DataNotFoundException;
 import com.in.demo.manage.manageit.model.Project;
 import com.in.demo.manage.manageit.repository.ProjectRepository;
 import org.junit.jupiter.api.Assertions;
@@ -47,7 +47,7 @@ class ProjectServiceTest {
     }
 
     @Test
-    void testGetProjectById() throws NotFoundException {
+    void testGetProjectById() throws DataNotFoundException {
         Project p1 = generateSampleProject();
         when(repository.findById(1L)).thenReturn(Optional.of(p1));
 
@@ -60,9 +60,9 @@ class ProjectServiceTest {
     public void thatGetProjectByIdThrowsNotFoundException() {
         when(repository.findById(anyLong())).thenReturn(Optional.empty());
 
-        Throwable throwable = Assertions.assertThrows(NotFoundException.class, () -> service.getProjectById(anyLong()));
+        Throwable throwable = Assertions.assertThrows(DataNotFoundException.class, () -> service.getProjectById(anyLong()));
 
-        assertThat(throwable).isExactlyInstanceOf(NotFoundException.class);
+        assertThat(throwable).isExactlyInstanceOf(DataNotFoundException.class);
     }
 
     @Test

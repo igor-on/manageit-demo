@@ -1,6 +1,6 @@
 package com.in.demo.manage.manageit.service;
 
-import com.in.demo.manage.manageit.error.NotFoundException;
+import com.in.demo.manage.manageit.error.DataNotFoundException;
 import com.in.demo.manage.manageit.model.Project;
 import com.in.demo.manage.manageit.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +19,8 @@ public class ProjectService {
         return repository.findAll();
     }
 
-    public Project getProjectById(Long id) throws NotFoundException {
-        return repository.findById(id).orElseThrow(() -> new NotFoundException("There is no project with this " + id));
+    public Project getProjectById(Long id) throws DataNotFoundException {
+        return repository.findById(id).orElseThrow(() -> new DataNotFoundException("There is no project with this id " + id));
     }
 
     public Project addNewProject(Project project) {
@@ -32,7 +32,7 @@ public class ProjectService {
     }
 
     @Transactional
-    public Project updateProject(Project project) throws NotFoundException {
+    public Project updateProject(Project project) throws DataNotFoundException {
         Project updatedProject = getProjectById(project.getId());
         updatedProject.setName(project.getName());
         updatedProject.setDescription(project.getDescription());
