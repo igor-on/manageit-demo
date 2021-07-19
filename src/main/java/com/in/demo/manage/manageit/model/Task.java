@@ -1,5 +1,6 @@
 package com.in.demo.manage.manageit.model;
 
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Data;
 import lombok.ToString;
@@ -12,6 +13,7 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "tasks")
 @NoArgsConstructor
+@AllArgsConstructor
 @Data
 @ToString(exclude = {"sprint"})
 public class Task {

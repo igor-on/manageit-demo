@@ -1,6 +1,7 @@
 package com.in.demo.manage.manageit.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "sprints")
+@AllArgsConstructor
 @Data
 public class Sprint {
 
