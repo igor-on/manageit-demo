@@ -7,6 +7,7 @@ import lombok.ToString;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Null;
 import javax.validation.constraints.Size;
 
 @Entity
@@ -19,6 +20,7 @@ public class Task {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Null
     private Long id;
     @NotBlank(message = "Task name can't be empty")
     @Size(min = 3, max = 55, message = "Task name has to be between 3 and 55 characters long")

@@ -1,5 +1,6 @@
 package com.in.demo.manage.manageit.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "projects")
 @NoArgsConstructor
+@AllArgsConstructor
 @Data
 public class Project {
 
