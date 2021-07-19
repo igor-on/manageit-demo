@@ -1,5 +1,6 @@
 package com.in.demo.manage.manageit.controller;
 
+import com.in.demo.manage.manageit.error.DataNotFoundException;
 import com.in.demo.manage.manageit.mapper.SprintMapper;
 import com.in.demo.manage.manageit.model.Sprint;
 import com.in.demo.manage.manageit.model.dto.SprintDTO;
@@ -32,7 +33,7 @@ public class SprintController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SprintDTO> getSprintById(@PathVariable Long id) {
+    public ResponseEntity<SprintDTO> getSprintById(@PathVariable Long id) throws DataNotFoundException {
         Sprint foundSprint = service.getSprintById(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -56,7 +57,7 @@ public class SprintController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SprintDTO> updateSprint(@RequestBody Sprint sprint) {
+    public ResponseEntity<SprintDTO> updateSprint(@RequestBody Sprint sprint) throws DataNotFoundException {
         Sprint updatedSprint = service.updateSprint(sprint);
         return ResponseEntity
                 .status(HttpStatus.OK)

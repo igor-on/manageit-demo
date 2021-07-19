@@ -1,5 +1,6 @@
 package com.in.demo.manage.manageit.controller;
 
+import com.in.demo.manage.manageit.error.DataNotFoundException;
 import com.in.demo.manage.manageit.mapper.TaskMapper;
 import com.in.demo.manage.manageit.model.Task;
 import com.in.demo.manage.manageit.model.dto.TaskDTO;
@@ -32,7 +33,7 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TaskDTO> getTaskById(@PathVariable Long id) {
+    public ResponseEntity<TaskDTO> getTaskById(@PathVariable Long id) throws DataNotFoundException {
         Task foundTask = service.getTaskById(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -40,7 +41,7 @@ public class TaskController {
     }
 
     @PostMapping()
-    public ResponseEntity<TaskDTO> createTask(@RequestBody Task task) {
+    public ResponseEntity<TaskDTO> createTask(@RequestBody Task task) throws DataNotFoundException {
         Task createdTask = service.addNewTask(task);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -56,7 +57,7 @@ public class TaskController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TaskDTO> updateTask(@RequestBody Task task) {
+    public ResponseEntity<TaskDTO> updateTask(@RequestBody Task task) throws DataNotFoundException {
         Task updatedTask = service.updateTask(task);
         return ResponseEntity
                 .status(HttpStatus.OK)
