@@ -15,7 +15,7 @@ import java.util.Optional;
 
 import static com.in.demo.manage.manageit.service.data.DataForServicesTests.generateSampleProject;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
@@ -27,10 +27,10 @@ class ProjectServiceTest {
     private ProjectRepository repository;
 
     @InjectMocks
-    ProjectService service;
+    private ProjectService service;
 
     @Test
-    void findAllProjects() {
+    void testFindAllProjects() {
         Project p1 = generateSampleProject();
         Project p2 = generateSampleProject();
         when(repository.findAll()).thenReturn(List.of(p1, p2));
@@ -47,42 +47,67 @@ class ProjectServiceTest {
     }
 
     @Test
-    void testGetProjectById() throws DataNotFoundException {
+    void testGetProjectById_WhenSuccess() throws DataNotFoundException {
         Project p1 = generateSampleProject();
-        when(repository.findById(1L)).thenReturn(Optional.of(p1));
+        long projectId = p1.getId();
+        when(repository.findById(projectId)).thenReturn(Optional.of(p1));
 
-        Project actual = service.getProjectById(1L);
+        Project actual = service.getProjectById(projectId);
 
         assertThat(actual).isEqualTo(p1);
     }
 
     @Test
-    public void thatGetProjectByIdThrowsNotFoundException() {
+    void thatGetProjectById_ThrowsAnExceptionWhenNotFound() {
         when(repository.findById(anyLong())).thenReturn(Optional.empty());
 
-        Throwable throwable = Assertions.assertThrows(DataNotFoundException.class, () -> service.getProjectById(anyLong()));
+        Throwable throwable = Assertions.assertThrows(DataNotFoundException.class,
+                () -> service.getProjectById(anyLong()));
 
         assertThat(throwable).isExactlyInstanceOf(DataNotFoundException.class);
     }
 
     @Test
-    void addNewProject() {
-        var project = new Project();
-        project.setDescription("ss");
-        project.setName("ss");
+    void testAddNewProject() throws DataNotFoundException { // <--- todo ------------// fine? //--------------------<<<
+        var project = new Project(100L, "project", "best project");
+
         when(repository.save(any())).thenReturn(project);
+        when(repository.findById(100L)).thenReturn(Optional.of(project));
 
-        Project actual = service.addNewProject(project);
+        var projectById = service.getProjectById(100L);
+        assertNotNull(projectById);
 
-        assertEquals(actual.getName(), project.getName());
-        assertEquals(actual.getDescription(), project.getDescription());
+        Project actual = service.addNewProject(projectById);
+
+        assertEquals(actual.getId(), projectById.getId());
+        assertEquals(actual.getName(), projectById.getName());
+        assertEquals(actual.getDescription(), projectById.getDescription());
     }
-//
-//    @Test
-//    void deleteProject() {
-//    }
-//
-//    @Test
-//    void updateProject() {
-//    }
+
+    @Test
+    void testDeleteProject_WhenSuccess() { // <--- todo ----------------------------// enough? //-------------------<<<
+        var project = new Project(100L, "project", "best project");
+//        when(repository.findById(anyLong())).thenReturn(Optional.of(project));
+
+        service.deleteProject(project.getId());
+    }
+
+    @Test
+    void testDeleteProject_WhenNotExist() {
+        when(repository.findById(anyLong())).thenReturn(Optional.empty());
+        assertThrows(DataNotFoundException.class, () -> service.getProjectById(1500L));
+    }
+
+    @Test
+    void testUpdateProject() throws DataNotFoundException {
+        var p1 = generateSampleProject();
+        var p2 = generateSampleProject();
+
+        when(repository.findById(p1.getId())).thenReturn(Optional.of(p1));
+        p2 = service.updateProject(p1);
+
+        assertEquals(p1.getId(), p2.getId());
+        assertEquals(p1.getName(), p2.getName());
+        assertEquals(p1.getDescription(), p2.getDescription());
+    }
 }

@@ -21,7 +21,8 @@ public class TaskService {
     }
 
     public Task getTaskById(Long id) throws DataNotFoundException {
-        return repository.findById(id).orElseThrow(() -> new DataNotFoundException("There is no task with this id " + id));
+        return repository.findById(id).orElseThrow(
+                () -> new DataNotFoundException("There is no task with this id " + id));
     }
 
     public void deleteTask(Long id) {
@@ -30,12 +31,13 @@ public class TaskService {
 
     public Task addNewTask(Task task) throws DataNotFoundException {
 
+        // todo ---------------------------------------------------  Zadbanie o odpowiednia relacje ze Sprintem
 
-        if(task.getId() != null) {
-            throw new IllegalArgumentException("HEJHEJEH");
-        }
+//        if(task.getId() != null) {
+//            throw new IllegalArgumentException("HEJHEJEH");
+//        }
 
-        //Zadbanie o odpowiednia relacje ze Sprintem
+
         Sprint relatedSprint = sprintService.getSprintById(task.getSprint().getId());
         relatedSprint.getTasks().add(task);
         relatedSprint.setStoryPointsToSpend(relatedSprint.getStoryPointsToSpend() - task.getStoryPoints());
