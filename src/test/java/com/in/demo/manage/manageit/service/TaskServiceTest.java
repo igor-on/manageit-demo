@@ -1,6 +1,7 @@
 package com.in.demo.manage.manageit.service;
 
 import com.in.demo.manage.manageit.error.DataNotFoundException;
+import com.in.demo.manage.manageit.error.NotEnoughPointsException;
 import com.in.demo.manage.manageit.model.*;
 import com.in.demo.manage.manageit.repository.TaskRepository;
 import org.junit.jupiter.api.Assertions;
@@ -13,10 +14,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static com.in.demo.manage.manageit.service.data.DataForServicesTests.*;
+import static com.in.demo.manage.manageit.data.TestsData.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
@@ -26,16 +26,19 @@ class TaskServiceTest {
     @Mock
     private TaskRepository repository;
 
+    @Mock
+    private SprintService sprintService;
+
     @InjectMocks
     private TaskService service;
 
     @Test
-    void testFindAllTasks() {
-        Task t1 = returnSampleTask();
-        Task t2 = returnSampleTask();
+    void testGetAllTasks() {
+        var t1 = generateSampleTask();
+        var t2 = generateSampleTask();
         when(repository.findAll()).thenReturn(List.of(t1, t2));
 
-        List<Task> actual = service.findAllTasks();
+        List<Task> actual = service.getAllTasks();
 
         assertThat(actual)
                 .hasSize(2)
@@ -48,7 +51,7 @@ class TaskServiceTest {
 
     @Test
     void testGetTaskById_WhenSuccess() throws DataNotFoundException {
-        Task t1 = returnSampleTask();
+        var t1 = generateSampleTask();
         long taskId = t1.getId();
         when(repository.findById(taskId)).thenReturn(Optional.of(t1));
 
@@ -58,7 +61,7 @@ class TaskServiceTest {
     }
 
     @Test
-    void thatGetTaskById_ThrowsAnExceptionWhenNotFound() {
+    void testGetTaskById_ShouldThrowException_WhenNotFound() {
         when(repository.findById(anyLong())).thenReturn(Optional.empty());
 
         Throwable throwable = Assertions.assertThrows(DataNotFoundException.class,
@@ -68,48 +71,67 @@ class TaskServiceTest {
     }
 
     @Test
-    void addNewTask() throws DataNotFoundException { // <--- todo ---// NPE or "HEJHEJHEJ" //-----------------------<<<
-        Sprint s1 = returnSampleSprint();
-        var task = new Task(100L, "task", "easy task", 5,
-                Progress.IN_PROGRESS, Priority.ONE, s1);
+    void testAddNewTask_WhenSuccess() throws DataNotFoundException {
+        var task = generateSampleTask();
+        var task2 = generateSampleTask();
+        Sprint sprint = task.getSprint();
+        task2.setSprint(sprint);
+        task.setId(null);
 
-        when(repository.save(any())).thenReturn(task);
-        when(repository.findById(100L)).thenReturn(Optional.of(task));
+        when(repository.save(task)).thenReturn(task2);
+        when(sprintService.getSprintById(task.getSprint().getId())).thenReturn(sprint);
 
-        var taskById = service.getTaskById(100L);
-        Task actual = service.addNewTask(taskById);
+        Task actual = service.addNewTask(task);
 
-        assertNotNull(taskById);
-        verify(repository, times(1)).findById(100L);
-
-        assertEquals(actual.getId(), taskById.getId());
-        assertEquals(actual.getName(), taskById.getName());
-        assertEquals(actual.getDescription(), taskById.getDescription());
-        assertEquals(actual.getStoryPoints(), taskById.getStoryPoints());
-        assertEquals(actual.getProgress(), taskById.getProgress());
-        assertEquals(actual.getPriority(), taskById.getPriority());
-        assertEquals(actual.getSprint(), taskById.getSprint());
+        assertNotNull(actual.getId());
+        assertEquals(actual.getName(), task.getName());
+        assertEquals(actual.getDescription(), task.getDescription());
+        assertEquals(actual.getStoryPoints(), task.getStoryPoints());
+        assertEquals(actual.getProgress(), task.getProgress());
+        assertEquals(actual.getPriority(), task.getPriority());
+        assertEquals(actual.getSprint().getId(), task.getSprint().getId());
     }
 
     @Test
-    void testDeleteSprint_WhenSuccess() { // <--- todo ----------------------------// enough? //-------------------<<<
-        var task = returnSampleTask();
-        //        when(repository.findById(anyLong())).thenReturn(Optional.of(task));
+    void testAddNewTask_ShouldThrowException_WhenTaskIsNull() {
+        assertThrows(DataNotFoundException.class, () -> service.addNewTask(null));
+    }
+
+    @Test
+    void testAddNewTask_ShouldThrowException_WhenIdIsNotNull() {
+        var task = generateSampleTask();
+        assertThrows(IllegalArgumentException.class, () -> service.addNewTask(task));
+    }
+
+    @Test
+    void testAddNewTask_ShouldThrowException_WhenSprintDoesntHaveEnoughPointsToSpend()
+            throws DataNotFoundException {
+        var task = generateSampleTask();
+        task.getSprint().setStoryPointsToSpend(0);
+        task.setId(null);
+
+        assertThrows(NotEnoughPointsException.class, () -> service.addNewTask(task));
+    }
+
+    @Test
+    void testDeleteSprint_WhenSuccess() {
+        var task = generateSampleTask();
 
         service.deleteTask(task.getId());
+
+        verify(repository, times(1)).deleteById(task.getId());
     }
 
     @Test
     void testDeleteSprint_WhenNotExist() {
         when(repository.findById(anyLong())).thenReturn(Optional.empty());
-        assertThrows(DataNotFoundException.class, () -> service.getTaskById(1500L));
+        assertThrows(DataNotFoundException.class, () -> service.getTaskById(10000L));
     }
 
     @Test
-    void testUpdateSprint() throws DataNotFoundException {
-        var t1 = returnSampleTask();
-        var t2 = new Task(100L, "task", "easy task", 5,
-                Progress.IN_PROGRESS, Priority.ONE, returnSampleSprint());
+    void testUpdateSprint_WhenSuccess() throws DataNotFoundException {
+        var t1 = generateSampleTask();
+        var t2 = generateSampleTask();
 
         when(repository.findById(t1.getId())).thenReturn(Optional.of(t1));
         t2 = service.updateTask(t1);

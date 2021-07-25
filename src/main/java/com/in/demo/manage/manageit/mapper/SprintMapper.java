@@ -1,6 +1,7 @@
 package com.in.demo.manage.manageit.mapper;
 
 import com.in.demo.manage.manageit.model.Sprint;
+import com.in.demo.manage.manageit.model.Task;
 import com.in.demo.manage.manageit.model.dto.SprintDTO;
 
 import java.time.format.DateTimeFormatter;
@@ -17,7 +18,7 @@ public class SprintMapper {
         String stringEndDate = sprint.getEndDate().format(formatter);
 
         List<Long> taskIds = sprint.getTasks().stream()
-                .map(e -> e.getId())
+                .map(Task::getId)
                 .collect(Collectors.toList());
 
         Integer storyPoints = sprint.getStoryPointsToSpend();

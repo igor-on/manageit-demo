@@ -20,7 +20,7 @@ public class ProjectController {
 
     @GetMapping()
     public ResponseEntity<List<Project>> getAllProjects() {
-        List<Project> allProjects = service.findAllProjects();
+        List<Project> allProjects = service.getAllProjects();
         return ResponseEntity.ok(allProjects);
     }
 
@@ -33,7 +33,7 @@ public class ProjectController {
     }
 
     @PostMapping()
-    public ResponseEntity<Project> createProject(@RequestBody Project project) {
+    public ResponseEntity<Project> createProject(@RequestBody Project project) throws DataNotFoundException {
         Project createdProject = service.addNewProject(project);
         return ResponseEntity
                 .status(HttpStatus.CREATED)

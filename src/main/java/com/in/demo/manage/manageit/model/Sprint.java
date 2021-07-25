@@ -27,7 +27,6 @@ public class Sprint {
     private LocalDateTime startDate;
     @Future
     private LocalDateTime endDate;
-    //TODO poprawic impl dodawania taskow
     private Integer storyPointsToSpend;
     @JsonIgnoreProperties(value = {"sprint"})
     @OneToMany(mappedBy = "sprint")

@@ -7,11 +7,11 @@ import lombok.Getter;
 @Builder
 public class TaskDTO {
 
-     private Long id;
-     private String name;
-     private String description;
-     private String storyPoints;
-     private String progress;
-     private String priority;
-     private Long sprintId;
+     public Long id;
+     public String name;
+     public String description;
+     public String storyPoints;
+     public String progress;
+     public String priority;
+     public Long sprintId;
 }

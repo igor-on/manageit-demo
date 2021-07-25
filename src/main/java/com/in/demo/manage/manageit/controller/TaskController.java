@@ -23,7 +23,7 @@ public class TaskController {
 
     @GetMapping()
     public ResponseEntity<List<TaskDTO>> getAllTasks() {
-        List<Task> allTasks = service.findAllTasks();
+        List<Task> allTasks = service.getAllTasks();
 
         List<TaskDTO> dtos = allTasks.stream()
                 .map(TaskMapper::mapToTaskDTO)
@@ -56,7 +56,7 @@ public class TaskController {
                 .build();
     }
 
-    @PutMapping("/{id}")
+    @PutMapping()
     public ResponseEntity<TaskDTO> updateTask(@RequestBody Task task) throws DataNotFoundException {
         Task updatedTask = service.updateTask(task);
         return ResponseEntity

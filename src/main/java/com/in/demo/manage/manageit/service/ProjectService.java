@@ -15,15 +15,22 @@ public class ProjectService {
 
     private final ProjectRepository repository;
 
-    public List<Project> findAllProjects() {
+    public List<Project> getAllProjects() {
         return repository.findAll();
     }
 
     public Project getProjectById(Long id) throws DataNotFoundException {
-        return repository.findById(id).orElseThrow(() -> new DataNotFoundException("There is no project with this id " + id));
+        return repository.findById(id).orElseThrow(
+                () -> new DataNotFoundException("There is no project with this id " + id));
     }
 
-    public Project addNewProject(Project project) {
+    public Project addNewProject(Project project) throws DataNotFoundException {
+        if (project == null) {
+            throw new DataNotFoundException("There is no project to add");
+        }
+        if (project.getId() != null) {
+            throw new IllegalArgumentException("Id is auto-generated, cannot be created manually");
+        }
         return repository.save(project);
     }
 

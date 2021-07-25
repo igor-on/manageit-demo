@@ -23,7 +23,7 @@ public class SprintController {
 
     @GetMapping()
     public ResponseEntity<List<SprintDTO>> getAllSprints() {
-        List<Sprint> allSprints = service.findAllSprints();
+        List<Sprint> allSprints = service.getAllSprints();
 
         List<SprintDTO> dtos = allSprints.stream()
                 .map(SprintMapper::mapToSprintDTO)
@@ -41,7 +41,7 @@ public class SprintController {
     }
 
     @PostMapping()
-    public ResponseEntity<SprintDTO> createSprint(@RequestBody Sprint sprint) {
+    public ResponseEntity<SprintDTO> createSprint(@RequestBody Sprint sprint) throws DataNotFoundException {
         Sprint createdSprint = service.addNewSprint(sprint);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -56,7 +56,7 @@ public class SprintController {
                 .build();
     }
 
-    @PutMapping("/{id}")
+    @PutMapping()
     public ResponseEntity<SprintDTO> updateSprint(@RequestBody Sprint sprint) throws DataNotFoundException {
         Sprint updatedSprint = service.updateSprint(sprint);
         return ResponseEntity

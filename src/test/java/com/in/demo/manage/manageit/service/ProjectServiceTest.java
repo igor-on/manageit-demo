@@ -13,12 +13,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static com.in.demo.manage.manageit.service.data.DataForServicesTests.generateSampleProject;
+import static com.in.demo.manage.manageit.data.TestsData.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ProjectServiceTest {
@@ -30,12 +29,12 @@ class ProjectServiceTest {
     private ProjectService service;
 
     @Test
-    void testFindAllProjects() {
-        Project p1 = generateSampleProject();
-        Project p2 = generateSampleProject();
+    void testGetAllProjects() {
+        var p1 = generateSampleProject();
+        var p2 = generateSampleProject();
         when(repository.findAll()).thenReturn(List.of(p1, p2));
 
-        List<Project> actual = service.findAllProjects();
+        List<Project> actual = service.getAllProjects();
 
         assertThat(actual)
                 .hasSize(2)
@@ -48,7 +47,7 @@ class ProjectServiceTest {
 
     @Test
     void testGetProjectById_WhenSuccess() throws DataNotFoundException {
-        Project p1 = generateSampleProject();
+        var p1 = generateSampleProject();
         long projectId = p1.getId();
         when(repository.findById(projectId)).thenReturn(Optional.of(p1));
 
@@ -58,7 +57,7 @@ class ProjectServiceTest {
     }
 
     @Test
-    void thatGetProjectById_ThrowsAnExceptionWhenNotFound() {
+    void testGetProjectById_ShouldThrowException_WhenNotFound() {
         when(repository.findById(anyLong())).thenReturn(Optional.empty());
 
         Throwable throwable = Assertions.assertThrows(DataNotFoundException.class,
@@ -68,38 +67,43 @@ class ProjectServiceTest {
     }
 
     @Test
-    void testAddNewProject() throws DataNotFoundException { // <--- todo ------------// fine? //--------------------<<<
-        var project = new Project(100L, "project", "best project");
+    void testAddNewProject_WhenSuccess() throws DataNotFoundException {
+        var project = generateSampleProject();
+        project.setId(null);
 
-        when(repository.save(any())).thenReturn(project);
-        when(repository.findById(100L)).thenReturn(Optional.of(project));
+        when(repository.save(project)).thenReturn(generateSampleProject());
 
-        var projectById = service.getProjectById(100L);
-        assertNotNull(projectById);
+        Project actual = service.addNewProject(project);
 
-        Project actual = service.addNewProject(projectById);
-
-        assertEquals(actual.getId(), projectById.getId());
-        assertEquals(actual.getName(), projectById.getName());
-        assertEquals(actual.getDescription(), projectById.getDescription());
+        assertNotNull(actual.getId());
+        assertEquals(actual.getName(), project.getName());
+        assertEquals(actual.getDescription(), project.getDescription());
     }
 
     @Test
-    void testDeleteProject_WhenSuccess() { // <--- todo ----------------------------// enough? //-------------------<<<
-        var project = new Project(100L, "project", "best project");
-//        when(repository.findById(anyLong())).thenReturn(Optional.of(project));
+    void testAddNewProject_ShouldThrowException_WhenIdIsNotNull() {
+        var project = generateSampleProject();
+        assertThrows(IllegalArgumentException.class, () -> service.addNewProject(project));
+    }
+
+
+    @Test
+    void testDeleteProject_WhenSuccess() {
+        var project = generateSampleProject();
 
         service.deleteProject(project.getId());
+
+        verify(repository, times(1)).deleteById(project.getId());
     }
 
     @Test
     void testDeleteProject_WhenNotExist() {
         when(repository.findById(anyLong())).thenReturn(Optional.empty());
-        assertThrows(DataNotFoundException.class, () -> service.getProjectById(1500L));
+        assertThrows(DataNotFoundException.class, () -> service.getProjectById(10000L));
     }
 
     @Test
-    void testUpdateProject() throws DataNotFoundException {
+    void testUpdateProject_WhenSuccess() throws DataNotFoundException {
         var p1 = generateSampleProject();
         var p2 = generateSampleProject();
 

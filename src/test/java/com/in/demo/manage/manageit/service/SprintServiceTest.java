@@ -1,9 +1,7 @@
 package com.in.demo.manage.manageit.service;
 
 import com.in.demo.manage.manageit.error.DataNotFoundException;
-import com.in.demo.manage.manageit.model.Project;
 import com.in.demo.manage.manageit.model.Sprint;
-import com.in.demo.manage.manageit.model.Task;
 import com.in.demo.manage.manageit.repository.SprintRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -12,11 +10,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static com.in.demo.manage.manageit.service.data.DataForServicesTests.*;
+import static com.in.demo.manage.manageit.data.TestsData.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -32,12 +29,12 @@ class SprintServiceTest {
     private SprintService service;
 
     @Test
-    void testFindAllSprints() {
-        Sprint s1 = returnSampleSprint();
-        Sprint s2 = returnSampleSprint();
+    void testGetAllSprints() {
+        var s1 = generateSampleSprint();
+        var s2 = generateSampleSprint();
         when(repository.findAll()).thenReturn(List.of(s1, s2));
 
-        List<Sprint> actual = service.findAllSprints();
+        List<Sprint> actual = service.getAllSprints();
 
         assertThat(actual)
                 .hasSize(2)
@@ -50,17 +47,17 @@ class SprintServiceTest {
 
     @Test
     void testGetSprintById_WhenSuccess() throws DataNotFoundException {
-        Sprint s1 = returnSampleSprint();
-        long sprintId = s1.getId();
-        when(repository.findById(sprintId)).thenReturn(Optional.of(s1));
+        Sprint s1 = generateSampleSprint();
 
-        Sprint actual = service.getSprintById(sprintId);
+        when(repository.findById(s1.getId())).thenReturn(Optional.of(s1));
+
+        Sprint actual = service.getSprintById(s1.getId());
 
         assertThat(actual).isEqualTo(s1);
     }
 
     @Test
-    void thatGetSprintById_ThrowsAnExceptionWhenNotFound() {
+    void testGetSprintById_ShouldThrowException_WhenNotFound() {
         when(repository.findById(anyLong())).thenReturn(Optional.empty());
 
         Throwable throwable = Assertions.assertThrows(DataNotFoundException.class,
@@ -70,52 +67,47 @@ class SprintServiceTest {
     }
 
     @Test
-    void addNewSprint() throws DataNotFoundException { // <--- todo ------------// fine? //-------------------------<<<
-        Task t1 = returnSampleTask();
-        Task t2 = returnSampleTask();
-        var sprint = new Sprint(100L, "sprint",
-                LocalDateTime.of(2021, 7, 20, 13, 30),
-                LocalDateTime.of(2021, 7, 27, 13, 30),
-                50, List.of(t1, t2));
+    void testAddNewSprint_WhenSuccess() throws DataNotFoundException {
+        var sprint = generateSampleSprint();
+        sprint.setId(null);
 
-        when(repository.save(sprint)).thenReturn(sprint);
-        when(repository.findById(100L)).thenReturn(Optional.of(sprint));
+        when(repository.save(sprint)).thenReturn(generateSampleSprint());
 
-        var sprintById = service.getSprintById(100L);
-        Sprint actual = service.addNewSprint(sprintById);
+        Sprint actual = service.addNewSprint(sprint);
 
-        assertNotNull(sprintById);
-        verify(repository, times(1)).findById(100L);
-
-        assertEquals(actual.getId(), sprintById.getId());
-        assertEquals(actual.getName(), sprintById.getName());
-        assertEquals(actual.getStartDate(), sprintById.getStartDate());
-        assertEquals(actual.getEndDate(), sprintById.getEndDate());
-        assertEquals(actual.getStoryPointsToSpend(), sprintById.getStoryPointsToSpend());
-        assertEquals(actual.getTasks(), sprintById.getTasks());
+        assertNotNull(actual.getId());
+        assertEquals(actual.getName(), sprint.getName());
+        assertEquals(actual.getStartDate(), sprint.getStartDate());
+        assertEquals(actual.getEndDate(), sprint.getEndDate());
+        assertEquals(actual.getStoryPointsToSpend(), sprint.getStoryPointsToSpend());
+        assertEquals(actual.getTasks(), sprint.getTasks());
     }
 
     @Test
-    void testDeleteSprint_WhenSuccess() { // <--- todo ----------------------------// enough? //--------------------<<<
-        var sprint = returnSampleSprint();
-//        when(repository.findById(anyLong())).thenReturn(Optional.of(sprint));
+    void testAddNewSprint_ShouldThrowException_WhenIdIsNotNull() {
+        var sprint = generateSampleSprint();
+        assertThrows(IllegalArgumentException.class, () -> service.addNewSprint(sprint));
+    }
+
+    @Test
+    void testDeleteSprint_WhenSuccess() {
+        var sprint = generateSampleSprint();
 
         service.deleteSprint(sprint.getId());
+
+        verify(repository, times(1)).deleteById(sprint.getId());
     }
 
     @Test
     void testDeleteSprint_WhenNotExist() {
         when(repository.findById(anyLong())).thenReturn(Optional.empty());
-        assertThrows(DataNotFoundException.class, () -> service.getSprintById(1500L));
+        assertThrows(DataNotFoundException.class, () -> service.getSprintById(10000L));
     }
 
     @Test
-    void testUpdateSprint() throws DataNotFoundException {
-        var s1 = returnSampleSprint();
-        var s2 = new Sprint(100L, "sprint",
-                LocalDateTime.of(2021, 7, 20, 13, 30),
-                LocalDateTime.of(2021, 7, 27, 13, 30),
-                50, List.of(returnSampleTask(), returnSampleTask()));
+    void testUpdateSprint_WhenSuccess() throws DataNotFoundException {
+        var s1 = generateSampleSprint();
+        var s2 = generateSampleSprint();
 
         when(repository.findById(s1.getId())).thenReturn(Optional.of(s1));
         s2 = service.updateSprint(s1);
