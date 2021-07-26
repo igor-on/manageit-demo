@@ -1,24 +1,27 @@
 package com.in.demo.manage.manageit.controller;
 
 import com.in.demo.manage.manageit.error.DataNotFoundException;
+import com.in.demo.manage.manageit.mapper.SprintMapper;
 import com.in.demo.manage.manageit.model.Sprint;
-import com.in.demo.manage.manageit.model.Task;
+import com.in.demo.manage.manageit.model.dto.SprintDTO;
 import com.in.demo.manage.manageit.service.SprintService;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.in.demo.manage.manageit.data.TestsData.generateSampleSprint;
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 @WebMvcTest(SprintController.class)
 public class SprintControllerTest {
@@ -31,144 +34,130 @@ public class SprintControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-/*
-    @Autowired
-    private WebApplicationContext webApplicationContext;
-
-    public void setUp() {
-        RestAssuredMockMvc.mockMvc(mockMvc);
-        RestAssuredMockMvc.webAppContextSetup(webApplicationContext);
-        //        RestAssuredMockMvc.standaloneSetup(TaskController.class);
-    }
-*/
-
     @Test
     void shouldCreateMockMvc() {
         assertNotNull(mockMvc);
     }
 
     @Test
-    void shouldReturnListOfAllSprints() throws DataNotFoundException {
-        var s1_temp = generateSampleSprint();
-        var s2_temp = generateSampleSprint();
-        s1_temp.setId(null);
-        s2_temp.setId(null);
-
-        Sprint s1 = service.addNewSprint(s1_temp);
-        Sprint s2 = service.addNewSprint(s2_temp);
-        List<Sprint> actual = service.getAllSprints();
-
+    void shouldReturnListOfAllSprints() {
+        var s1 = generateSampleSprint();
+        var s2 = generateSampleSprint();
+        List<Sprint> sprintList = new ArrayList<>();
+        sprintList.add(s1);
+        sprintList.add(s2);
+        Mockito.when(service.getAllSprints()).thenReturn(sprintList);
+        SprintDTO sDTO1 = SprintMapper.mapToSprintDTO(sprintList.get(0));
+        SprintDTO sDTO2 = SprintMapper.mapToSprintDTO(sprintList.get(1));
+//        System.out.println(sDTO1.isActive());
+//        System.out.println(sDTO2.isActive());
         given()
                 .mockMvc(mockMvc)
                 .contentType(ContentType.JSON)
-                .when()
                 .get(SPRINTS_URI)
-                .then()
-                .assertThat()
+                .then().assertThat()
                 .statusCode(HttpStatus.OK.value())
-                .body("actual", not(null))
-                .body("actual.size()", is(2))
-                .body("[0].id", equalTo(s1.getId())).body("[1].id", equalTo(s2.getId()))
-                .body("[0].name", equalTo(s1.getName())).body("[1].name", equalTo(s2.getName()))
-                .body("[0].startDate", equalTo(s1.getStartDate())).body("[1].startDate", equalTo(s2.getStartDate()))
-                .body("[0].endDate", equalTo(s1.getEndDate())).body("[1].endDate", equalTo(s2.getEndDate()))
-                .body("[0].storyPointsToSpend", equalTo(s1.getStoryPointsToSpend()))
-                .body("[1].storyPointsToSpend", equalTo(s2.getStoryPointsToSpend()))
-/* todo ??? */.body("[0].tasksIds", equalTo(s1.getTasks().stream().mapToLong(Task::getId)))
-                .body("[1].tasksIds", equalTo(s2.getTasks().stream().mapToLong(Task::getId)));
+                .body(".", notNullValue())
+                .body("size()", is(2))
+                .body("[0].id", equalTo(sDTO1.getId().intValue()))
+                .body("[1].id", equalTo(sDTO2.getId().intValue()))
+                .body("[0].name", equalTo(sDTO1.getName()))
+                .body("[1].name", equalTo(sDTO2.getName()))
+                .body("[0].startDate", equalTo(sDTO1.getStartDate()))
+                .body("[1].startDate", equalTo(sDTO2.getStartDate()))
+                .body("[0].endDate", equalTo(sDTO1.getEndDate()))
+                .body("[1].endDate", equalTo(sDTO2.getEndDate()))
+                .body("[0].storyPointsToSpend", equalTo(sDTO1.getStoryPointsToSpend()))
+                .body("[1].storyPointsToSpend", equalTo(sDTO2.getStoryPointsToSpend()))
+                .body("[0].tasksIds", equalTo(sDTO1.getTasksIds()))
+                .body("[1].tasksIds", equalTo(sDTO2.getTasksIds()))
+                .body("[0].active", equalTo(sDTO1.isActive()))
+                .body("[1].active", equalTo(sDTO2.isActive()));
     }
 
     @Test
     void testGetSprintById_WhenSuccess() throws DataNotFoundException {
-        Sprint sprint = service.getSprintById(generateSampleSprint().getId());
+        Sprint sprint = generateSampleSprint();
+        Mockito.when(service.getSprintById(1L)).thenReturn(sprint);
+
+        SprintDTO sprintDTO = SprintMapper.mapToSprintDTO(sprint);
 
         given()
                 .mockMvc(mockMvc)
                 .contentType(ContentType.JSON)
-                .queryParam(String.valueOf(sprint.getId()))
-                .log().body()
-                .when()
-                .get(SPRINTS_URI)
-                .then()
-                .assertThat()
+                .when().get(SPRINTS_URI + "/1")
+                .then().assertThat()
                 .statusCode(HttpStatus.OK.value())
-                .body("id", not(null))
-                .body("id", equalTo(sprint.getId()))
-                .body("name", equalTo(sprint.getName()))
-                .body("startDate", equalTo(sprint.getStartDate()))
-                .body("endDate", equalTo(sprint.getEndDate()))
-                .body("storyPointsToSpend", equalTo(sprint.getStoryPointsToSpend()))
-/* todo ??? */.body("tasksIds", equalTo(sprint.getTasks().stream().mapToLong(Task::getId)));
+                .body("id", notNullValue())
+                .body("id", equalTo(sprintDTO.getId().intValue()))
+                .body("name", equalTo(sprintDTO.getName()))
+                .body("startDate", equalTo(sprintDTO.getStartDate()))
+                .body("endDate", equalTo(sprintDTO.getEndDate()))
+                .body("storyPointsToSpend", equalTo(sprintDTO.getStoryPointsToSpend()))
+                .body("tasksIds", equalTo(sprintDTO.getTasksIds()))
+                .body("active", equalTo(sprintDTO.isActive()));
     }
 
     @Test
     void testCreateSprint_WhenSuccess() throws DataNotFoundException {
-        var s1_temp = generateSampleSprint();
-        s1_temp.setId(null);
+        var s1 = generateSampleSprint();
+        s1.setId(null);
+        Sprint sprint = generateSampleSprint();
 
-        Sprint sprint = service.addNewSprint(s1_temp);
+        Mockito.when(service.addNewSprint(s1)).thenReturn(sprint);
+        SprintDTO sprintDTO = SprintMapper.mapToSprintDTO(sprint);
+
 
         given()
                 .mockMvc(mockMvc)
                 .contentType(ContentType.JSON)
-                .body(sprint)
-                .log().body()
-                .when()
-                .post(SPRINTS_URI)
-                .then()
-                .assertThat()
+                .body(s1)
+                .when().post(SPRINTS_URI)
+                .then().assertThat()
                 .statusCode(HttpStatus.CREATED.value())
-                .body("id", not(null))
-                .body("id", equalTo(sprint.getId()))
-                .body("name", equalTo(sprint.getName()))
-                .body("startDate", equalTo(sprint.getStartDate()))
-                .body("endDate", equalTo(sprint.getEndDate()))
-                .body("storyPointsToSpend", equalTo(sprint.getStoryPointsToSpend()))
-/* todo ??? */.body("tasksIds", equalTo(sprint.getTasks().stream().mapToLong(Task::getId)));
+                .body("id", notNullValue())
+                .body("id", equalTo(sprintDTO.getId().intValue()))
+                .body("name", equalTo(sprintDTO.getName()))
+                .body("startDate", equalTo(sprintDTO.getStartDate()))
+                .body("endDate", equalTo(sprintDTO.getEndDate()))
+                .body("storyPointsToSpend", equalTo(sprintDTO.getStoryPointsToSpend()))
+                .body("tasksIds", equalTo(sprintDTO.getTasksIds()))
+                .body("active", equalTo(sprintDTO.isActive()));
     }
 
     @Test
-    void testRemoveSprint_WhenSuccess() throws DataNotFoundException {
-        var s1 = generateSampleSprint();
-
-        service.deleteSprint(s1.getId());
-        Sprint testSprint = service.getSprintById(s1.getId());
-
-        assertNull(testSprint);
+    void testRemoveSprint_WhenSuccess() {
+        Mockito.doNothing().when(service).deleteSprint(1L);
         given()
                 .mockMvc(mockMvc)
                 .contentType(ContentType.JSON)
-                .body(s1.getId())
-                .log().body()
-                .when()
-                .delete(SPRINTS_URI)
-                .then()
-                .assertThat()
+                .when().delete(SPRINTS_URI + "/1")
+                .then().assertThat()
                 .statusCode(HttpStatus.NO_CONTENT.value());
+        Mockito.verify(service, Mockito.times(1)).deleteSprint(1L);
     }
 
     @Test
     void testUpdateSprint_WhenSuccess() throws DataNotFoundException {
-        var s1 = service.getSprintById(generateSampleSprint().getId());
-        var s2 = service.getSprintById(generateSampleSprint().getId());
-        s2 = service.updateSprint(s1);
+        var s1 = generateSampleSprint();
+        var s2 = generateSampleSprint();
+        Mockito.when(service.updateSprint(s1)).thenReturn(s2);
+        SprintDTO sprintDTO = SprintMapper.mapToSprintDTO(s2);
 
         given()
                 .mockMvc(mockMvc)
                 .contentType(ContentType.JSON)
-                .body(s2)
-                .log().body()
-                .when()
-                .put(SPRINTS_URI)
-                .then()
-                .assertThat()
+                .body(s1)
+                .when().put(SPRINTS_URI)
+                .then().assertThat()
                 .statusCode(HttpStatus.OK.value())
-                .body("id", not(null))
-                .body("id", equalTo(s1.getId()))
-                .body("name", equalTo(s1.getName()))
-                .body("startDate", equalTo(s1.getStartDate()))
-                .body("endDate", equalTo(s1.getEndDate()))
-                .body("storyPointsToSpend", equalTo(s1.getStoryPointsToSpend()))
-/* todo ??? */.body("tasksIds", equalTo(s1.getTasks().stream().mapToLong(Task::getId)));
+                .body("id", notNullValue())
+                .body("id", equalTo(sprintDTO.getId().intValue()))
+                .body("name", equalTo(sprintDTO.getName()))
+                .body("startDate", equalTo(sprintDTO.getStartDate()))
+                .body("endDate", equalTo(sprintDTO.getEndDate()))
+                .body("storyPointsToSpend", equalTo(sprintDTO.getStoryPointsToSpend()))
+                .body("tasksIds", equalTo(sprintDTO.getTasksIds()))
+                .body("active", equalTo(sprintDTO.isActive()));
     }
 }

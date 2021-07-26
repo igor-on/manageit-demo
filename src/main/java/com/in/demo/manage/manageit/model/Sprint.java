@@ -31,6 +31,7 @@ public class Sprint {
     @JsonIgnoreProperties(value = {"sprint"})
     @OneToMany(mappedBy = "sprint")
     private List<Task> tasks;
+    private boolean isActive;
 
     public Sprint() {
         tasks = new ArrayList<>();

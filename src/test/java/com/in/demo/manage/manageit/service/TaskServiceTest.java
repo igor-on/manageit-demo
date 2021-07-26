@@ -104,11 +104,14 @@ class TaskServiceTest {
     }
 
     @Test
-    void testAddNewTask_ShouldThrowException_WhenSprintDoesntHaveEnoughPointsToSpend()
+    void testAddNewTask_ShouldThrowException_WhenAssigningToSprintWhichDoesntHaveEnoughPointsToSpend()
             throws DataNotFoundException {
         var task = generateSampleTask();
-        task.getSprint().setStoryPointsToSpend(0);
         task.setId(null);
+        var sprint = task.getSprint();
+        sprint.setStoryPointsToSpend(0);
+
+        when(sprintService.getSprintById(task.getSprint().getId())).thenReturn(sprint);
 
         assertThrows(NotEnoughPointsException.class, () -> service.addNewTask(task));
     }

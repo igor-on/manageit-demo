@@ -81,6 +81,7 @@ class SprintServiceTest {
         assertEquals(actual.getEndDate(), sprint.getEndDate());
         assertEquals(actual.getStoryPointsToSpend(), sprint.getStoryPointsToSpend());
         assertEquals(actual.getTasks(), sprint.getTasks());
+        assertEquals(actual.isActive(), sprint.isActive());
     }
 
     @Test
@@ -118,5 +119,6 @@ class SprintServiceTest {
         assertEquals(s1.getEndDate(), s2.getEndDate());
         assertEquals(s1.getStoryPointsToSpend(), s2.getStoryPointsToSpend());
         assertEquals(s1.getTasks(), s2.getTasks());
+        assertEquals(s1.isActive(), s2.isActive());
     }
 }

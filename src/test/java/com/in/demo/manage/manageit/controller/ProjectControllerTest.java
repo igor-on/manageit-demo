@@ -5,19 +5,20 @@ import com.in.demo.manage.manageit.model.Project;
 import com.in.demo.manage.manageit.service.ProjectService;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.in.demo.manage.manageit.data.TestsData.generateSampleProject;
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 @WebMvcTest(ProjectController.class)
 public class ProjectControllerTest {
@@ -30,131 +31,101 @@ public class ProjectControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-/*
-    @Autowired
-    private WebApplicationContext webApplicationContext;
-
-    public void setUp() {
-        RestAssuredMockMvc.mockMvc(mockMvc);
-        RestAssuredMockMvc.webAppContextSetup(webApplicationContext);
-        //        RestAssuredMockMvc.standaloneSetup(TaskController.class);
-    }
-*/
-
     @Test
     void shouldCreateMockMvc() {
         assertNotNull(mockMvc);
     }
 
     @Test
-    void shouldReturnListOfAllProjects() throws DataNotFoundException {
-        var p1_temp = generateSampleProject();
-        var p2_temp = generateSampleProject();
-        p1_temp.setId(null);
-        p2_temp.setId(null);
-
-        Project t1 = service.addNewProject(p1_temp);
-        Project t2 = service.addNewProject(p2_temp);
-        List<Project> actual = service.getAllProjects();
+    void shouldReturnListOfAllProjects() {
+        var p1 = generateSampleProject();
+        var p2 = generateSampleProject();
+        List<Project> projectList = new ArrayList<>();
+        projectList.add(p1);
+        projectList.add(p2);
+        Mockito.when(service.getAllProjects()).thenReturn(projectList);
 
         given()
                 .mockMvc(mockMvc)
                 .contentType(ContentType.JSON)
-                .when()
                 .get(PROJECTS_URI)
-                .then()
-                .assertThat()
+                .then().assertThat()
                 .statusCode(HttpStatus.OK.value())
-                .body("actual", not(null))
-                .body("actual.size()", is(2))
-                .body("[0].id", equalTo(t1.getId())).body("[1].id", equalTo(t2.getId()))
-                .body("[0].name", equalTo(t1.getName())).body("[1].name", equalTo(t2.getName()))
-                .body("[0].description", equalTo(t1.getDescription()))
-                .body("[1].description", equalTo(t2.getDescription()));
+                .body(".", notNullValue())
+                .body("size()", is(2))
+                .body("[0].id", equalTo(p1.getId().intValue()))
+                .body("[1].id", equalTo(p2.getId().intValue()))
+                .body("[0].name", equalTo(p1.getName()))
+                .body("[1].name", equalTo(p2.getName()))
+                .body("[0].description", equalTo(p1.getDescription()))
+                .body("[1].description", equalTo(p2.getDescription()));
     }
 
     @Test
     void testGetProjectById_WhenSuccess() throws DataNotFoundException {
-        Project project = service.getProjectById(generateSampleProject().getId());
+        Project project = generateSampleProject();
+        Mockito.when(service.getProjectById(1L)).thenReturn(project);
 
         given()
                 .mockMvc(mockMvc)
                 .contentType(ContentType.JSON)
-                .body(String.valueOf(project.getId()))
-                .log().body()
-                .when()
-                .get(PROJECTS_URI)
-                .then()
-                .assertThat()
+                .when().get(PROJECTS_URI + "/1")
+                .then().assertThat()
                 .statusCode(HttpStatus.OK.value())
-                .body("id", not(null))
-                .body("id", equalTo(project.getId()))
+                .body("id", equalTo(project.getId().intValue()))
                 .body("name", equalTo(project.getName()))
                 .body("description", equalTo(project.getDescription()));
     }
 
     @Test
     void testCreateProject_WhenSuccess() throws DataNotFoundException {
-        var p1_temp = generateSampleProject();
-        p1_temp.setId(null);
+        var p1 = generateSampleProject();
+        p1.setId(null);
+        Project project = generateSampleProject();
 
-        Project p1 = service.addNewProject(p1_temp);
+        Mockito.when(service.addNewProject(p1)).thenReturn(project);
 
         given()
                 .mockMvc(mockMvc)
                 .contentType(ContentType.JSON)
                 .body(p1)
-                .log().body()
-                .when()
-                .post(PROJECTS_URI)
-                .then()
-                .assertThat()
+                .when().post(PROJECTS_URI)
+                .then().assertThat()
                 .statusCode(HttpStatus.CREATED.value())
-                .body("id", not(null))
-                .body("id", equalTo(p1.getId()))
-                .body("name", equalTo(p1.getName()))
-                .body("description", equalTo(p1.getDescription()));
+                .body("id", notNullValue())
+                .body("id", equalTo(project.getId().intValue()))
+                .body("name", equalTo(project.getName()))
+                .body("description", equalTo(project.getDescription()));
     }
 
     @Test
-    void testRemoveProject_WhenSuccess() throws DataNotFoundException {
-        var p1 = generateSampleProject();
-
-        service.deleteProject(p1.getId());
-        Project testProject = service.getProjectById(p1.getId());
-
-        assertNull(testProject);
+    void testRemoveProject_WhenSuccess() {
+        Mockito.doNothing().when(service).deleteProject(1L);
         given()
                 .mockMvc(mockMvc)
                 .contentType(ContentType.JSON)
-                .body(p1.getId())
-                .log().body()
-                .when()
-                .delete(PROJECTS_URI)
-                .then()
-                .assertThat()
+                .when().delete(PROJECTS_URI + "/1")
+                .then().assertThat()
                 .statusCode(HttpStatus.NO_CONTENT.value());
+        Mockito.verify(service, Mockito.times(1)).deleteProject(1L);
     }
 
     @Test
-    void testUpdateTask_WhenSuccess() throws DataNotFoundException {
-        var p1 = service.getProjectById(generateSampleProject().getId());
-        var p2 = service.getProjectById(generateSampleProject().getId());
-        p2 = service.updateProject(p1);
+    void testUpdateProject_WhenSuccess() throws DataNotFoundException {
+        var p1 = generateSampleProject();
+        var p2 = generateSampleProject();
+        Mockito.when(service.updateProject(p1)).thenReturn(p2);
 
         given()
                 .mockMvc(mockMvc)
                 .contentType(ContentType.JSON)
-                .body(p2)
-                .log().body()
-                .when()
-                .put(PROJECTS_URI)
-                .then()
-                .assertThat()
+                .body(p1)
+                .when().put(PROJECTS_URI)
+                .then().assertThat()
                 .statusCode(HttpStatus.OK.value())
-                .body("id", not(null))
-                .body("id", equalTo(p1.getId()))
-                .body("name", equalTo(p1.getName()))
-                .body("description", equalTo(p1.getDescription()));
+                .body("id", notNullValue())
+                .body("id", equalTo(p2.getId().intValue()))
+                .body("name", equalTo(p2.getName()))
+                .body("description", equalTo(p2.getDescription()));
     }
 }

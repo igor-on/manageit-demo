@@ -30,6 +30,7 @@ public class SprintMapper {
                 .endDate(stringEndDate)
                 .storyPointsToSpend(storyPoints != null ? storyPoints.toString() : "")
                 .tasksIds(taskIds)
+                .isActive(sprint.isActive())
                 .build();
     }
 }

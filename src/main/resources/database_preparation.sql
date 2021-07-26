@@ -27,8 +27,8 @@ CONSTRAINT PK_task PRIMARY KEY (id),
 CONSTRAINT FK_SprintTask FOREIGN KEY (sprint_id) REFERENCES sprints(id)
 );
 
-
 ALTER TABLE sprints ADD COLUMN story_points_to_spend INT NULL AFTER end_date;
+ALTER TABLE sprints ADD COLUMN is_active BOOLEAN AFTER story_points_to_spend;
 ALTER TABLE tasks CHANGE COLUMN weight progress ENUM('1', '2', '3', '4', '5');
 
 SELECT * FROM projects;

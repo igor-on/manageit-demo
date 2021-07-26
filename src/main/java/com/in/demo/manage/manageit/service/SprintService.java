@@ -44,7 +44,8 @@ public class SprintService {
         updatedSprint.setName(sprint.getName());
         updatedSprint.setStartDate(sprint.getStartDate());
         updatedSprint.setEndDate(sprint.getEndDate());
-        updatedSprint.setTasks(sprint.getTasks());
+        updatedSprint.setStoryPointsToSpend(sprint.getStoryPointsToSpend());
+        updatedSprint.setActive(sprint.isActive());
         return updatedSprint;
     }
 }
