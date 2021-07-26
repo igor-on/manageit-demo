@@ -21,9 +21,11 @@ public class SprintController {
 
     private final SprintService service;
 
+
+    @CrossOrigin("http://localhost:4200")
     @GetMapping()
     public ResponseEntity<List<SprintDTO>> getAllSprints() {
-        List<Sprint> allSprints = service.findAllSprints();
+        List<Sprint> allSprints = service.getAllSprints();
 
         List<SprintDTO> dtos = allSprints.stream()
                 .map(SprintMapper::mapToSprintDTO)
@@ -32,6 +34,7 @@ public class SprintController {
         return ResponseEntity.ok(dtos);
     }
 
+    @CrossOrigin("http://localhost:4200")
     @GetMapping("/{id}")
     public ResponseEntity<SprintDTO> getSprintById(@PathVariable Long id) throws DataNotFoundException {
         Sprint foundSprint = service.getSprintById(id);
@@ -40,14 +43,16 @@ public class SprintController {
                 .body(SprintMapper.mapToSprintDTO(foundSprint));
     }
 
+    @CrossOrigin("http://localhost:4200")
     @PostMapping()
-    public ResponseEntity<SprintDTO> createSprint(@RequestBody Sprint sprint) {
+    public ResponseEntity<SprintDTO> createSprint(@RequestBody Sprint sprint) throws DataNotFoundException {
         Sprint createdSprint = service.addNewSprint(sprint);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(SprintMapper.mapToSprintDTO(createdSprint));
     }
 
+    @CrossOrigin("http://localhost:4200")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> removeSprint(@PathVariable Long id) {
         service.deleteSprint(id);
@@ -56,7 +61,8 @@ public class SprintController {
                 .build();
     }
 
-    @PutMapping("/{id}")
+    @CrossOrigin("http://localhost:4200")
+    @PutMapping()
     public ResponseEntity<SprintDTO> updateSprint(@RequestBody Sprint sprint) throws DataNotFoundException {
         Sprint updatedSprint = service.updateSprint(sprint);
         return ResponseEntity

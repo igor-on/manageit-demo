@@ -11,14 +11,20 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SprintMapperTest {
 
     @Test
     void that_mapToSprintDTO_worksCorrectly() {
-        Sprint testSprint = new Sprint(1L, "testSprint", LocalDateTime.of(2021, 7, 10, 15, 30), LocalDateTime.of(2021, 7, 17, 15, 30), 30, new ArrayList<>());
-        testSprint.getTasks().add(new Task(2L, "task1", "desc1", 4, Progress.TO_DO, Priority.TWO, testSprint));
-        testSprint.getTasks().add(new Task(4L, "task2", "desc2", 2, Progress.TO_DO, Priority.ONE, testSprint));
+        Sprint testSprint = new Sprint(1L, "testSprint",
+                LocalDateTime.of(2021, 7, 10, 15, 30),
+                LocalDateTime.of(2021, 7, 17, 15, 30),
+                30, new ArrayList<>(), true);
+        testSprint.getTasks().add(new Task(2L, "task1", "desc1", 4,
+                Progress.TO_DO, Priority.TWO, testSprint));
+        testSprint.getTasks().add(new Task(4L, "task2", "desc2", 2,
+                Progress.TO_DO, Priority.ONE, testSprint));
 
         SprintDTO actual = SprintMapper.mapToSprintDTO(testSprint);
 
@@ -29,5 +35,6 @@ class SprintMapperTest {
         assertThat(actual.getTasksIds())
                 .hasSize(2)
                 .containsExactly(2L, 4L);
+        assertThat(actual.isActive()).isTrue();
     }
 }

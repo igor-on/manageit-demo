@@ -16,8 +16,12 @@ class TaskMapperTest {
 
     @Test
     void that_mapToTaskDTO_worksCorrectly() {
-        Sprint testSprint = new Sprint(1L, "testSprint", LocalDateTime.of(2021, 7, 10, 15, 30), LocalDateTime.of(2021, 7, 17, 15, 30), 30, new ArrayList<>());
-        Task testTask = new Task(2L, "task1", "desc1", 4, Progress.TO_DO, Priority.TWO, testSprint);
+        Sprint testSprint = new Sprint(1L, "testSprint",
+                LocalDateTime.of(2021, 7, 10, 15, 30),
+                LocalDateTime.of(2021, 7, 17, 15, 30),
+                30, new ArrayList<>(), true);
+        Task testTask = new Task(2L, "task1", "desc1", 4,
+                Progress.TO_DO, Priority.TWO, testSprint);
 
         TaskDTO actual = TaskMapper.mapToTaskDTO(testTask);
 
@@ -25,5 +29,4 @@ class TaskMapperTest {
         assertThat(actual.getPriority()).isEqualTo("2");
         assertThat(actual.getSprintId()).isEqualTo(1L);
     }
-
 }

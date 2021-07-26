@@ -5,6 +5,7 @@ import com.in.demo.manage.manageit.model.Sprint;
 import com.in.demo.manage.manageit.repository.SprintRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -14,15 +15,22 @@ public class SprintService {
 
     private final SprintRepository repository;
 
-    public List<Sprint> findAllSprints() {
+    public List<Sprint> getAllSprints() {
         return repository.findAll();
     }
 
     public Sprint getSprintById(Long id) throws DataNotFoundException {
-        return repository.findById(id).orElseThrow(() -> new DataNotFoundException("There is no sprint with this id " + id));
+        return repository.findById(id).orElseThrow(
+                () -> new DataNotFoundException("There is no sprint with this id " + id));
     }
 
-    public Sprint addNewSprint(Sprint sprint) {
+    public Sprint addNewSprint(Sprint sprint) throws DataNotFoundException {
+        if (sprint == null) {
+            throw new DataNotFoundException("There is no sprint to add");
+        }
+        if (sprint.getId() != null) {
+            throw new IllegalArgumentException("Id is auto-generated, cannot be created manually");
+        }
         return repository.save(sprint);
     }
 
@@ -30,12 +38,14 @@ public class SprintService {
         repository.deleteById(id);
     }
 
+    @Transactional
     public Sprint updateSprint(Sprint sprint) throws DataNotFoundException {
         Sprint updatedSprint = getSprintById(sprint.getId());
         updatedSprint.setName(sprint.getName());
         updatedSprint.setStartDate(sprint.getStartDate());
         updatedSprint.setEndDate(sprint.getEndDate());
-        updatedSprint.setTasks(sprint.getTasks());
+        updatedSprint.setStoryPointsToSpend(sprint.getStoryPointsToSpend());
+        updatedSprint.setActive(sprint.isActive());
         return updatedSprint;
     }
 }

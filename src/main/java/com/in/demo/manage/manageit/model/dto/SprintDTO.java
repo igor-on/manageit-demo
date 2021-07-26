@@ -9,10 +9,11 @@ import java.util.List;
 @Builder
 public class SprintDTO {
 
-    private Long id;
-    private String name;
-    private String startDate;
-    private String endDate;
-    private String storyPointsToSpend;
-    private List<Long> tasksIds;
+    private final Long id;
+    private final String name;
+    private final String startDate;
+    private final String endDate;
+    private final String storyPointsToSpend;
+    private final List<Long> tasksIds;
+    private final boolean isActive;
 }

@@ -9,6 +9,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RestControllerAdvice
@@ -17,14 +18,20 @@ public class GlobalErrorHandler {
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Error handleValidationException(ConstraintViolationException e) {
-        //TODO zastanowić sie nad najlepszym i najbardziej optymalnym rozwiazaniem(czy z @Valid czy bez)
         Optional<ConstraintViolation<?>> constraintViolation = e.getConstraintViolations().stream().findFirst();
-        return new Error(constraintViolation.get().getMessage(), LocalDateTime.now(Clock.systemUTC()), HttpStatus.BAD_REQUEST.value());
+        return new Error(constraintViolation.orElseThrow(NoSuchElementException::new).getMessage(),
+                LocalDateTime.now(Clock.systemUTC()), HttpStatus.BAD_REQUEST.value());
     }
 
     @ExceptionHandler(DataNotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Error handleException(DataNotFoundException e) {
+    public Error handleDataException(DataNotFoundException e) {
+        return new Error(e.getMessage(), LocalDateTime.now(Clock.systemUTC()), HttpStatus.BAD_REQUEST.value());
+    }
+
+    @ExceptionHandler(NotEnoughPointsException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Error handlePointsException(NotEnoughPointsException e) {
         return new Error(e.getMessage(), LocalDateTime.now(Clock.systemUTC()), HttpStatus.BAD_REQUEST.value());
     }
 }

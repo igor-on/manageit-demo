@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Getter
 public class Error {
 
-    private String message;
-    private LocalDateTime dateTime;
-    private Integer status;
+    private final String message;
+    private final LocalDateTime dateTime;
+    private final Integer status;
 }
