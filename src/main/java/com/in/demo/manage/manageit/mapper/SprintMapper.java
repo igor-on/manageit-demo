@@ -14,8 +14,8 @@ public class SprintMapper {
     public static SprintDTO mapToSprintDTO(Sprint sprint) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy, h:mm a").localizedBy(Locale.ENGLISH);
-        String stringStartDate = sprint.getStartDate().format(formatter);
-        String stringEndDate = sprint.getEndDate().format(formatter);
+        String stringStartDate = sprint.getStartDate() != null ? sprint.getStartDate().format(formatter) : null;
+        String stringEndDate = sprint.getEndDate() != null ? sprint.getEndDate().format(formatter) : null;
 
         List<Long> taskIds = sprint.getTasks().stream()
                 .map(Task::getId)

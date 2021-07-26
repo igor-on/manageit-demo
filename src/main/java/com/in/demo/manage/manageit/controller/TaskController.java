@@ -21,6 +21,7 @@ public class TaskController {
 
     private final TaskService service;
 
+    @CrossOrigin("http://localhost:4200")
     @GetMapping()
     public ResponseEntity<List<TaskDTO>> getAllTasks() {
         List<Task> allTasks = service.getAllTasks();
@@ -32,6 +33,7 @@ public class TaskController {
         return ResponseEntity.ok(dtos);
     }
 
+    @CrossOrigin("http://localhost:4200")
     @GetMapping("/{id}")
     public ResponseEntity<TaskDTO> getTaskById(@PathVariable Long id) throws DataNotFoundException {
         Task foundTask = service.getTaskById(id);
@@ -40,6 +42,7 @@ public class TaskController {
                 .body(TaskMapper.mapToTaskDTO(foundTask));
     }
 
+    @CrossOrigin("http://localhost:4200")
     @PostMapping()
     public ResponseEntity<TaskDTO> createTask(@RequestBody Task task) throws DataNotFoundException {
         Task createdTask = service.addNewTask(task);
@@ -48,6 +51,7 @@ public class TaskController {
                 .body(TaskMapper.mapToTaskDTO(createdTask));
     }
 
+    @CrossOrigin("http://localhost:4200")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> removeTask(@PathVariable Long id) {
         service.deleteTask(id);
@@ -56,6 +60,7 @@ public class TaskController {
                 .build();
     }
 
+    @CrossOrigin("http://localhost:4200")
     @PutMapping()
     public ResponseEntity<TaskDTO> updateTask(@RequestBody Task task) throws DataNotFoundException {
         Task updatedTask = service.updateTask(task);
