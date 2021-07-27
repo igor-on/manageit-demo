@@ -29,7 +29,7 @@ public class Sprint {
     private LocalDateTime endDate;
     private Integer storyPointsToSpend;
     @JsonIgnoreProperties(value = {"sprint"})
-    @OneToMany(mappedBy = "sprint")
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "sprint")
     private List<Task> tasks;
     private boolean isActive;
 
