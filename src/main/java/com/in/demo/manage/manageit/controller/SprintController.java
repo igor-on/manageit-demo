@@ -64,8 +64,17 @@ public class SprintController {
 
     @CrossOrigin("http://localhost:4200")
     @PutMapping("/{id}")
-    public ResponseEntity<SprintDTO> updateToActive(@PathVariable long id) throws DataNotFoundException, InvalidDataException {
+    public ResponseEntity<SprintDTO> startSprint(@PathVariable long id) throws DataNotFoundException, InvalidDataException {
         Sprint activated = service.changeToActive(id);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(SprintMapper.mapToSprintDTO(activated));
+    }
+
+    @CrossOrigin("http://localhost:4200")
+    @PutMapping("/finish/{id}")
+    public ResponseEntity<SprintDTO> finishSprint(@PathVariable long id) throws DataNotFoundException, InvalidDataException {
+        Sprint activated = service.changeToFinish(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(SprintMapper.mapToSprintDTO(activated));

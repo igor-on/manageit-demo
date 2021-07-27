@@ -53,6 +53,18 @@ public class SprintService {
     }
 
     @Transactional
+    public Sprint changeToFinish(long id) throws DataNotFoundException, InvalidDataException {
+        Sprint sprintToFinish = getSprintById(id);
+
+        if(!sprintToFinish.isActive()) {
+            throw new InvalidDataException("This sprint isn't even active");
+        }
+
+        sprintToFinish.setActive(false);
+        return sprintToFinish;
+    }
+
+    @Transactional
     public Sprint updateSprint(Sprint sprint) throws DataNotFoundException {
         Sprint updatedSprint = getSprintById(sprint.getId());
         updatedSprint.setName(sprint.getName());
