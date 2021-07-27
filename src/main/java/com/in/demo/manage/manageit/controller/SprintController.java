@@ -1,6 +1,7 @@
 package com.in.demo.manage.manageit.controller;
 
 import com.in.demo.manage.manageit.error.DataNotFoundException;
+import com.in.demo.manage.manageit.error.InvalidDataException;
 import com.in.demo.manage.manageit.mapper.SprintMapper;
 import com.in.demo.manage.manageit.model.Sprint;
 import com.in.demo.manage.manageit.model.dto.SprintDTO;
@@ -59,6 +60,15 @@ public class SprintController {
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
                 .build();
+    }
+
+    @CrossOrigin("http://localhost:4200")
+    @PutMapping("/{id}")
+    public ResponseEntity<SprintDTO> updateToActive(@PathVariable long id) throws DataNotFoundException, InvalidDataException {
+        Sprint activated = service.changeToActive(id);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(SprintMapper.mapToSprintDTO(activated));
     }
 
     @CrossOrigin("http://localhost:4200")

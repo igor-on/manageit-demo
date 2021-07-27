@@ -1,6 +1,7 @@
 package com.in.demo.manage.manageit.controller;
 
 import com.in.demo.manage.manageit.error.DataNotFoundException;
+import com.in.demo.manage.manageit.error.InvalidDataException;
 import com.in.demo.manage.manageit.mapper.SprintMapper;
 import com.in.demo.manage.manageit.model.Sprint;
 import com.in.demo.manage.manageit.model.dto.SprintDTO;
@@ -135,6 +136,28 @@ public class SprintControllerTest {
                 .then().assertThat()
                 .statusCode(HttpStatus.NO_CONTENT.value());
         Mockito.verify(service, Mockito.times(1)).deleteSprint(1L);
+    }
+
+    @Test
+    void testUpdateToActive_WhenSuccess() throws DataNotFoundException, InvalidDataException {
+        Sprint s1 = generateSampleSprint();
+        s1.setActive(true);
+
+        Mockito.when(service.changeToActive(1L)).thenReturn(s1);
+        SprintDTO mappedS1 = SprintMapper.mapToSprintDTO(s1);
+
+        given()
+                .when()
+                .put(SPRINTS_URI + "/")
+                .then()
+                .status(HttpStatus.OK)
+                .body(".", notNullValue())
+                .body("name", equalTo(mappedS1.getName()))
+                .body("startDate", equalTo(mappedS1.getStartDate()))
+                .body("endDate", equalTo(mappedS1.getEndDate()))
+                .body("storyPointsToSpend", equalTo(mappedS1.getStoryPointsToSpend()))
+                .body("tasksIds", equalTo(mappedS1.getTasksIds()))
+                .body("active", equalTo(mappedS1.isActive()));
     }
 
     @Test

@@ -34,4 +34,10 @@ public class GlobalErrorHandler {
     public Error handlePointsException(NotEnoughPointsException e) {
         return new Error(e.getMessage(), LocalDateTime.now(Clock.systemUTC()), HttpStatus.BAD_REQUEST.value());
     }
+
+    @ExceptionHandler(InvalidDataException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Error handleInvalidDataException(InvalidDataException e) {
+        return new Error(e.getMessage(), LocalDateTime.now(Clock.systemUTC()), HttpStatus.BAD_REQUEST.value());
+    }
 }

@@ -1,6 +1,7 @@
 package com.in.demo.manage.manageit.service;
 
 import com.in.demo.manage.manageit.error.DataNotFoundException;
+import com.in.demo.manage.manageit.error.InvalidDataException;
 import com.in.demo.manage.manageit.model.Sprint;
 import com.in.demo.manage.manageit.repository.SprintRepository;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,20 @@ public class SprintService {
 
     public void deleteSprint(Long id) {
         repository.deleteById(id);
+    }
+
+    @Transactional
+    public Sprint changeToActive(long id) throws DataNotFoundException, InvalidDataException {
+        Sprint sprintToActivate = getSprintById(id);
+
+        long activatedSprints = getAllSprints().stream().filter(Sprint::isActive).count();
+        if(activatedSprints >= 1) {
+            throw new InvalidDataException("Other sprint is already active");
+        }
+
+        System.out.println(sprintToActivate);
+        sprintToActivate.setActive(true);
+        return sprintToActivate;
     }
 
     @Transactional

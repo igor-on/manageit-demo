@@ -35,5 +35,6 @@ public class Sprint {
 
     public Sprint() {
         tasks = new ArrayList<>();
+        isActive = false;
     }
 }
