@@ -13,7 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static com.in.demo.manage.manageit.data.TestsData.*;
+import static com.in.demo.manage.manageit.data.TestsData.generateSampleSprint;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -82,6 +82,7 @@ class SprintServiceTest {
         assertEquals(actual.getStoryPointsToSpend(), sprint.getStoryPointsToSpend());
         assertEquals(actual.getTasks(), sprint.getTasks());
         assertEquals(actual.isActive(), sprint.isActive());
+        assertEquals(actual.getUsers(), sprint.getUsers());
     }
 
     @Test
@@ -120,5 +121,6 @@ class SprintServiceTest {
         assertEquals(s1.getStoryPointsToSpend(), s2.getStoryPointsToSpend());
         assertEquals(s1.getTasks(), s2.getTasks());
         assertEquals(s1.isActive(), s2.isActive());
+        assertEquals(s1.getUsers(), s2.getUsers());
     }
 }

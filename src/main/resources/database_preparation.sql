@@ -1,35 +1,67 @@
 USE manage_it_db;
 
-CREATE TABLE IF NOT EXISTS projects(
-id BIGINT AUTO_INCREMENT,
-name VARCHAR(55) NOT NULL,
-description VARCHAR(255),
-CONSTRAINT PK_project PRIMARY KEY (id)
+DROP TABLE users;
+DROP TABLE projects;
+DROP TABLE sprints;
+DROP TABLE tasks;
+DROP TABLE sprints_users;
+
+SELECT *
+FROM projects;
+SELECT *
+FROM sprints;
+SELECT *
+FROM tasks;
+SELECT *
+FROM users;
+SELECT *
+FROM sprints_users;
+
+CREATE TABLE IF NOT EXISTS sprints
+(
+    id                    BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name                  VARCHAR(55) NOT NULL,
+    start_date            DATETIME,
+    end_date              DATETIME,
+    story_points_to_spend INT         NULL,
+    is_active             BOOLEAN,
+    user_id               BIGINT      NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS sprints(
-id BIGINT AUTO_INCREMENT,
-name VARCHAR(55) NOT NULL,
-start_date DATETIME,
-end_date DATETIME,
-CONSTRAINT PK_sprint PRIMARY KEY (id)
+CREATE TABLE IF NOT EXISTS tasks
+(
+    id           BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name         VARCHAR(55) NOT NULL,
+    description  VARCHAR(255),
+    story_points INT,
+    progress     ENUM ('TO_DO', 'IN_PROGRESS', 'DONE'),
+    priority     ENUM ('1', '2', '3', '4', '5'),
+    sprint_id    BIGINT      NOT NULL,
+    CONSTRAINT FK_SprintTask FOREIGN KEY (sprint_id) REFERENCES sprints (id)
 );
 
-CREATE TABLE IF NOT EXISTS tasks(
-id BIGINT AUTO_INCREMENT,
-name VARCHAR(55) NOT NULL,
-description VARCHAR(255),
-story_points INT,
-progress ENUM('TO_DO', 'IN_PROGRESS', 'DONE'),
-weight ENUM('1', '2', '3', '4', '5'),
-sprint_id BIGINT NOT NULL,
-CONSTRAINT PK_task PRIMARY KEY (id),
-CONSTRAINT FK_SprintTask FOREIGN KEY (sprint_id) REFERENCES sprints(id)
+CREATE TABLE IF NOT EXISTS users
+(
+    id         BIGINT AUTO_INCREMENT PRIMARY KEY,
+    username   VARCHAR(55) NOT NULL,
+    password   VARCHAR(55),
+    project_id BIGINT      NOT NULL,
+    sprint_id  BIGINT      NOT NULL
 );
 
-ALTER TABLE sprints ADD COLUMN story_points_to_spend INT NULL AFTER end_date;
-ALTER TABLE sprints ADD COLUMN is_active BOOLEAN AFTER story_points_to_spend;
-ALTER TABLE tasks CHANGE COLUMN weight progress ENUM('1', '2', '3', '4', '5');
+CREATE TABLE IF NOT EXISTS projects
+(
+    id          BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name        VARCHAR(55) NOT NULL,
+    description VARCHAR(255),
+    owner_id    BIGINT      NOT NULL,
+    CONSTRAINT FK_UserProject FOREIGN KEY (owner_id) REFERENCES users (id)
+);
 
-SELECT * FROM projects;
-SELECT * FROM sprints;
+CREATE TABLE IF NOT EXISTS sprints_users
+(
+    users_id   BIGINT,
+    sprints_id BIGINT,
+    CONSTRAINT FK_SprintUser FOREIGN KEY (sprints_id) REFERENCES sprints (id),
+    CONSTRAINT FK_UserSprint FOREIGN KEY (users_id) REFERENCES users (id)
+);
