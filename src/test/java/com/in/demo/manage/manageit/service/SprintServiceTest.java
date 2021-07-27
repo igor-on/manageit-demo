@@ -1,6 +1,7 @@
 package com.in.demo.manage.manageit.service;
 
 import com.in.demo.manage.manageit.error.DataNotFoundException;
+import com.in.demo.manage.manageit.error.InvalidDataException;
 import com.in.demo.manage.manageit.model.Sprint;
 import com.in.demo.manage.manageit.repository.SprintRepository;
 import org.junit.jupiter.api.Assertions;
@@ -106,19 +107,46 @@ class SprintServiceTest {
     }
 
     @Test
-    void testUpdateSprint_WhenSuccess() throws DataNotFoundException {
-        var s1 = generateSampleSprint();
-        var s2 = generateSampleSprint();
+    void testChangeToActive_WhenSuccess() throws DataNotFoundException, InvalidDataException {
+        Sprint s1 = generateSampleSprint();
 
         when(repository.findById(s1.getId())).thenReturn(Optional.of(s1));
-        s2 = service.updateSprint(s1);
+        Sprint actual = service.changeToActive(s1.getId());
 
-        assertEquals(s1.getId(), s2.getId());
-        assertEquals(s1.getName(), s2.getName());
-        assertEquals(s1.getStartDate(), s2.getStartDate());
-        assertEquals(s1.getEndDate(), s2.getEndDate());
-        assertEquals(s1.getStoryPointsToSpend(), s2.getStoryPointsToSpend());
-        assertEquals(s1.getTasks(), s2.getTasks());
-        assertEquals(s1.isActive(), s2.isActive());
+        assertThat(actual.isActive()).isEqualTo(true);
+    }
+
+    @Test
+    void testChangeToActive_WhenOtherSprintIsActive() {
+        Sprint s1 = generateSampleSprint();
+        Sprint s2 = generateSampleSprint();
+        s2.setActive(true);
+        Sprint s3 = generateSampleSprint();
+        List<Sprint> sprintList = List.of(s1, s2, s3);
+
+        when(repository.findById(s1.getId())).thenReturn(Optional.of(s1));
+        when(repository.findAll()).thenReturn(sprintList);
+
+        Throwable throwable = Assertions.assertThrows(InvalidDataException.class, () -> service.changeToActive(s1.getId()));
+
+        assertThat(throwable)
+                .isExactlyInstanceOf(InvalidDataException.class)
+                .hasMessage("Other sprint is already active");
+    }
+
+    @Test
+    void testUpdateSprint_WhenSuccess() throws DataNotFoundException {
+        var s1 = generateSampleSprint();
+
+        when(repository.findById(s1.getId())).thenReturn(Optional.of(s1));
+        Sprint actual = service.updateSprint(s1);
+
+        assertEquals(s1.getId(), actual.getId());
+        assertEquals(s1.getName(), actual.getName());
+        assertEquals(s1.getStartDate(), actual.getStartDate());
+        assertEquals(s1.getEndDate(), actual.getEndDate());
+        assertEquals(s1.getStoryPointsToSpend(), actual.getStoryPointsToSpend());
+        assertEquals(s1.getTasks(), actual.getTasks());
+        assertEquals(s1.isActive(), actual.isActive());
     }
 }

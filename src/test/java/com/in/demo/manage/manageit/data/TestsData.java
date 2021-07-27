@@ -17,7 +17,7 @@ public class TestsData {
         return new Sprint(sprintId, "sample sprint",
                 LocalDateTime.of(2021, 7, 10, 15, 30),
                 LocalDateTime.of(2021, 7, 17, 15, 30),
-                30, new ArrayList<>(), true);
+                30, new ArrayList<>(), false);
     }
 
     public static Task generateSampleTask() {

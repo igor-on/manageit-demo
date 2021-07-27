@@ -147,8 +147,9 @@ public class SprintControllerTest {
         SprintDTO mappedS1 = SprintMapper.mapToSprintDTO(s1);
 
         given()
+                .mockMvc(mockMvc)
                 .when()
-                .put(SPRINTS_URI + "/")
+                .put(SPRINTS_URI + "/1")
                 .then()
                 .status(HttpStatus.OK)
                 .body(".", notNullValue())
@@ -158,6 +159,22 @@ public class SprintControllerTest {
                 .body("storyPointsToSpend", equalTo(mappedS1.getStoryPointsToSpend()))
                 .body("tasksIds", equalTo(mappedS1.getTasksIds()))
                 .body("active", equalTo(mappedS1.isActive()));
+    }
+
+    @Test
+    void testUpdateToActive_WhenOtherSprintIsActive() throws DataNotFoundException, InvalidDataException {
+
+        Mockito.when(service.changeToActive(1L)).thenThrow(new InvalidDataException("Other sprint is already active"));
+
+        given()
+                .mockMvc(mockMvc)
+                .when()
+                .put(SPRINTS_URI + "/1")
+                .then()
+                .status(HttpStatus.BAD_REQUEST)
+                .body(".", notNullValue())
+                .body("status", equalTo(400))
+                .body("message", equalTo("Other sprint is already active"));
     }
 
     @Test

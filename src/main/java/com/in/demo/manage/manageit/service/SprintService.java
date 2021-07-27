@@ -48,7 +48,6 @@ public class SprintService {
             throw new InvalidDataException("Other sprint is already active");
         }
 
-        System.out.println(sprintToActivate);
         sprintToActivate.setActive(true);
         return sprintToActivate;
     }
