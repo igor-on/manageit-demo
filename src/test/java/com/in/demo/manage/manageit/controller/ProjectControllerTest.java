@@ -1,7 +1,9 @@
 package com.in.demo.manage.manageit.controller;
 
 import com.in.demo.manage.manageit.error.DataNotFoundException;
+import com.in.demo.manage.manageit.mapper.ProjectMapper;
 import com.in.demo.manage.manageit.model.Project;
+import com.in.demo.manage.manageit.model.dto.ProjectDTO;
 import com.in.demo.manage.manageit.service.ProjectService;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
@@ -44,6 +46,8 @@ public class ProjectControllerTest {
         projectList.add(p1);
         projectList.add(p2);
         Mockito.when(service.getAllProjects()).thenReturn(projectList);
+        ProjectDTO pDTO1 = ProjectMapper.mapToProjectDTO(projectList.get(0));
+        ProjectDTO pDTO2 = ProjectMapper.mapToProjectDTO(projectList.get(1));
 
         given()
                 .mockMvc(mockMvc)
@@ -53,18 +57,22 @@ public class ProjectControllerTest {
                 .statusCode(HttpStatus.OK.value())
                 .body(".", notNullValue())
                 .body("size()", is(2))
-                .body("[0].id", equalTo(p1.getId().intValue()))
-                .body("[1].id", equalTo(p2.getId().intValue()))
-                .body("[0].name", equalTo(p1.getName()))
-                .body("[1].name", equalTo(p2.getName()))
-                .body("[0].description", equalTo(p1.getDescription()))
-                .body("[1].description", equalTo(p2.getDescription()));
+                .body("[0].id", equalTo(pDTO1.getId().intValue()))
+                .body("[1].id", equalTo(pDTO2.getId().intValue()))
+                .body("[0].name", equalTo(pDTO1.getName()))
+                .body("[1].name", equalTo(pDTO2.getName()))
+                .body("[0].description", equalTo(pDTO1.getDescription()))
+                .body("[1].description", equalTo(pDTO2.getDescription()))
+                .body("[0].ownerId", equalTo(pDTO1.getOwnerId().intValue()))
+                .body("[1].ownerId", equalTo(pDTO2.getOwnerId().intValue()));
     }
 
     @Test
     void testGetProjectById_WhenSuccess() throws DataNotFoundException {
         Project project = generateSampleProject();
+
         Mockito.when(service.getProjectById(1L)).thenReturn(project);
+        ProjectDTO projectDTO = ProjectMapper.mapToProjectDTO(project);
 
         given()
                 .mockMvc(mockMvc)
@@ -72,9 +80,10 @@ public class ProjectControllerTest {
                 .when().get(PROJECTS_URI + "/1")
                 .then().assertThat()
                 .statusCode(HttpStatus.OK.value())
-                .body("id", equalTo(project.getId().intValue()))
-                .body("name", equalTo(project.getName()))
-                .body("description", equalTo(project.getDescription()));
+                .body("id", equalTo(projectDTO.getId().intValue()))
+                .body("name", equalTo(projectDTO.getName()))
+                .body("description", equalTo(projectDTO.getDescription()))
+                .body("ownerId", equalTo(projectDTO.getOwnerId().intValue()));
     }
 
     @Test
@@ -84,6 +93,7 @@ public class ProjectControllerTest {
         Project project = generateSampleProject();
 
         Mockito.when(service.addNewProject(p1)).thenReturn(project);
+        ProjectDTO projectDTO = ProjectMapper.mapToProjectDTO(project);
 
         given()
                 .mockMvc(mockMvc)
@@ -93,9 +103,10 @@ public class ProjectControllerTest {
                 .then().assertThat()
                 .statusCode(HttpStatus.CREATED.value())
                 .body("id", notNullValue())
-                .body("id", equalTo(project.getId().intValue()))
-                .body("name", equalTo(project.getName()))
-                .body("description", equalTo(project.getDescription()));
+                .body("id", equalTo(projectDTO.getId().intValue()))
+                .body("name", equalTo(projectDTO.getName()))
+                .body("description", equalTo(projectDTO.getDescription()))
+                .body("ownerId", equalTo(projectDTO.getOwnerId().intValue()));
     }
 
     @Test
@@ -115,6 +126,7 @@ public class ProjectControllerTest {
         var p1 = generateSampleProject();
         var p2 = generateSampleProject();
         Mockito.when(service.updateProject(p1)).thenReturn(p2);
+        ProjectDTO projectDTO = ProjectMapper.mapToProjectDTO(p2);
 
         given()
                 .mockMvc(mockMvc)
@@ -124,8 +136,9 @@ public class ProjectControllerTest {
                 .then().assertThat()
                 .statusCode(HttpStatus.OK.value())
                 .body("id", notNullValue())
-                .body("id", equalTo(p2.getId().intValue()))
-                .body("name", equalTo(p2.getName()))
-                .body("description", equalTo(p2.getDescription()));
+                .body("id", equalTo(projectDTO.getId().intValue()))
+                .body("name", equalTo(projectDTO.getName()))
+                .body("description", equalTo(projectDTO.getDescription()))
+                .body("ownerId", equalTo(projectDTO.getOwnerId().intValue()));
     }
 }

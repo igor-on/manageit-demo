@@ -16,7 +16,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.in.demo.manage.manageit.data.TestsData.generateSampleSprint;
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
@@ -49,8 +48,7 @@ public class SprintControllerTest {
         Mockito.when(service.getAllSprints()).thenReturn(sprintList);
         SprintDTO sDTO1 = SprintMapper.mapToSprintDTO(sprintList.get(0));
         SprintDTO sDTO2 = SprintMapper.mapToSprintDTO(sprintList.get(1));
-//        System.out.println(sDTO1.isActive());
-//        System.out.println(sDTO2.isActive());
+
         given()
                 .mockMvc(mockMvc)
                 .contentType(ContentType.JSON)
@@ -72,7 +70,10 @@ public class SprintControllerTest {
                 .body("[0].tasksIds", equalTo(sDTO1.getTasksIds()))
                 .body("[1].tasksIds", equalTo(sDTO2.getTasksIds()))
                 .body("[0].active", equalTo(sDTO1.isActive()))
-                .body("[1].active", equalTo(sDTO2.isActive()));
+                .body("[1].active", equalTo(sDTO2.isActive()))
+                .body("[0].usersIds", equalTo(List.of(sDTO1.getUsersIds().get(0).intValue())))
+                .body("[1].usersIds", equalTo(List.of(sDTO2.getUsersIds().get(0).intValue())));
+                // todo ---- fix it to be sure that method does not fail if there is no usersIds or some tasksIds
     }
 
     @Test
@@ -95,7 +96,8 @@ public class SprintControllerTest {
                 .body("endDate", equalTo(sprintDTO.getEndDate()))
                 .body("storyPointsToSpend", equalTo(sprintDTO.getStoryPointsToSpend()))
                 .body("tasksIds", equalTo(sprintDTO.getTasksIds()))
-                .body("active", equalTo(sprintDTO.isActive()));
+                .body("active", equalTo(sprintDTO.isActive()))
+                .body("usersIds", equalTo(List.of(sprintDTO.getUsersIds().get(0).intValue())));
     }
 
     @Test
@@ -120,9 +122,9 @@ public class SprintControllerTest {
                 .body("name", equalTo(sprintDTO.getName()))
                 .body("startDate", equalTo(sprintDTO.getStartDate()))
                 .body("endDate", equalTo(sprintDTO.getEndDate()))
-                .body("storyPointsToSpend", equalTo(sprintDTO.getStoryPointsToSpend()))
                 .body("tasksIds", equalTo(sprintDTO.getTasksIds()))
-                .body("active", equalTo(sprintDTO.isActive()));
+                .body("active", equalTo(sprintDTO.isActive()))
+                .body("usersIds", equalTo(List.of(sprintDTO.getUsersIds().get(0).intValue())));
     }
 
     @Test
@@ -158,6 +160,7 @@ public class SprintControllerTest {
                 .body("endDate", equalTo(sprintDTO.getEndDate()))
                 .body("storyPointsToSpend", equalTo(sprintDTO.getStoryPointsToSpend()))
                 .body("tasksIds", equalTo(sprintDTO.getTasksIds()))
-                .body("active", equalTo(sprintDTO.isActive()));
+                .body("active", equalTo(sprintDTO.isActive()))
+                .body("usersIds", equalTo(List.of(sprintDTO.getUsersIds().get(0).intValue())));
     }
 }

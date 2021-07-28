@@ -13,7 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static com.in.demo.manage.manageit.data.TestsData.*;
+import static com.in.demo.manage.manageit.data.TestsData.generateSampleProject;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -78,6 +78,7 @@ class ProjectServiceTest {
         assertNotNull(actual.getId());
         assertEquals(actual.getName(), project.getName());
         assertEquals(actual.getDescription(), project.getDescription());
+        assertEquals(actual.getOwner(), project.getOwner());
     }
 
     @Test
@@ -113,5 +114,6 @@ class ProjectServiceTest {
         assertEquals(p1.getId(), p2.getId());
         assertEquals(p1.getName(), p2.getName());
         assertEquals(p1.getDescription(), p2.getDescription());
+        assertEquals(p1.getOwner(), p2.getOwner());
     }
 }
