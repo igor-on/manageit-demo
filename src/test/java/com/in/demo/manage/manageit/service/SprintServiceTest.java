@@ -108,6 +108,34 @@ class SprintServiceTest {
     }
 
     @Test
+    void testChangeToActive_WhenSuccess() throws DataNotFoundException, InvalidDataException {
+        Sprint s1 = generateSampleSprint();
+
+        when(repository.findById(s1.getId())).thenReturn(Optional.of(s1));
+        Sprint actual = service.changeToActive(s1.getId());
+
+        assertThat(actual.isActive()).isEqualTo(true);
+    }
+
+    @Test
+    void testChangeToActive_WhenOtherSprintIsActive() {
+        Sprint s1 = generateSampleSprint();
+        Sprint s2 = generateSampleSprint();
+        s2.setActive(true);
+        Sprint s3 = generateSampleSprint();
+        List<Sprint> sprintList = List.of(s1, s2, s3);
+
+        when(repository.findById(s1.getId())).thenReturn(Optional.of(s1));
+        when(repository.findAll()).thenReturn(sprintList);
+
+        Throwable throwable = Assertions.assertThrows(InvalidDataException.class, () -> service.changeToActive(s1.getId()));
+
+        assertThat(throwable)
+                .isExactlyInstanceOf(InvalidDataException.class)
+                .hasMessage("Other sprint is already active");
+    }
+
+    @Test
     void testUpdateSprint_WhenSuccess() throws DataNotFoundException {
         var s1 = generateSampleSprint();
 
