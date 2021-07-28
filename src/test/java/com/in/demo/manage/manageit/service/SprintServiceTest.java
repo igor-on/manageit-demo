@@ -1,6 +1,7 @@
 package com.in.demo.manage.manageit.service;
 
 import com.in.demo.manage.manageit.error.DataNotFoundException;
+import com.in.demo.manage.manageit.error.InvalidDataException;
 import com.in.demo.manage.manageit.model.Sprint;
 import com.in.demo.manage.manageit.repository.SprintRepository;
 import org.junit.jupiter.api.Assertions;
@@ -13,7 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static com.in.demo.manage.manageit.data.TestsData.generateSampleSprint;
+import static com.in.demo.manage.manageit.data.TestsData.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -107,20 +108,90 @@ class SprintServiceTest {
     }
 
     @Test
-    void testUpdateSprint_WhenSuccess() throws DataNotFoundException {
-        var s1 = generateSampleSprint();
-        var s2 = generateSampleSprint();
+    void testChangeToActive_WhenSuccess() throws DataNotFoundException, InvalidDataException {
+        Sprint s1 = generateSampleSprint();
 
         when(repository.findById(s1.getId())).thenReturn(Optional.of(s1));
-        s2 = service.updateSprint(s1);
+        Sprint actual = service.changeToActive(s1.getId());
 
-        assertEquals(s1.getId(), s2.getId());
-        assertEquals(s1.getName(), s2.getName());
-        assertEquals(s1.getStartDate(), s2.getStartDate());
-        assertEquals(s1.getEndDate(), s2.getEndDate());
-        assertEquals(s1.getStoryPointsToSpend(), s2.getStoryPointsToSpend());
-        assertEquals(s1.getTasks(), s2.getTasks());
-        assertEquals(s1.isActive(), s2.isActive());
-        assertEquals(s1.getUsers(), s2.getUsers());
+        assertThat(actual.isActive()).isEqualTo(true);
+    }
+
+    @Test
+    void testChangeToActive_WhenOtherSprintIsActive() {
+        Sprint s1 = generateSampleSprint();
+        Sprint s2 = generateSampleSprint();
+        s2.setActive(true);
+        Sprint s3 = generateSampleSprint();
+        List<Sprint> sprintList = List.of(s1, s2, s3);
+
+        when(repository.findById(s1.getId())).thenReturn(Optional.of(s1));
+        when(repository.findAll()).thenReturn(sprintList);
+
+        Throwable throwable = Assertions.assertThrows(InvalidDataException.class, () -> service.changeToActive(s1.getId()));
+
+        assertThat(throwable)
+                .isExactlyInstanceOf(InvalidDataException.class)
+                .hasMessage("Other sprint is already active");
+    }
+
+    @Test
+    void testChangeToActive_WhenNoDataIsFound() {
+        when(repository.findById(1L)).thenReturn(Optional.empty());
+        Throwable throwable = Assertions.assertThrows(DataNotFoundException.class, () -> service.changeToActive(1L));
+
+        assertThat(throwable)
+                .isExactlyInstanceOf(DataNotFoundException.class)
+                .hasMessage("There is no sprint with this id " + 1);
+    }
+
+    @Test
+    void testChangeToFinish_WhenSuccess() throws DataNotFoundException, InvalidDataException {
+        Sprint s1 = generateSampleSprint();
+        s1.setActive(true);
+
+        when(repository.findById(s1.getId())).thenReturn(Optional.of(s1));
+        Sprint actual = service.changeToFinish(s1.getId());
+
+        assertThat(actual.getId()).isEqualTo(s1.getId());
+        assertThat(actual.isActive()).isEqualTo(false);
+    }
+
+    @Test
+    void testChangeToFinish_WhenSprintIsNotActive() {
+        Sprint s1 = generateSampleSprint();
+
+        when(repository.findById(s1.getId())).thenReturn(Optional.of(s1));
+        Throwable throwable = Assertions.assertThrows(InvalidDataException.class, () -> service.changeToFinish(s1.getId()));
+
+        assertThat(throwable)
+                .isExactlyInstanceOf(InvalidDataException.class)
+                .hasMessage("This sprint isn't even active");
+    }
+
+    @Test
+    void testChangeToFinish_WhenNoDataIsFound() {
+        when(repository.findById(1L)).thenReturn(Optional.empty());
+        Throwable throwable = Assertions.assertThrows(DataNotFoundException.class, () -> service.changeToFinish(1L));
+
+        assertThat(throwable)
+                .isExactlyInstanceOf(DataNotFoundException.class)
+                .hasMessage("There is no sprint with this id " + 1);
+    }
+
+    @Test
+    void testUpdateSprint_WhenSuccess() throws DataNotFoundException {
+        var s1 = generateSampleSprint();
+
+        when(repository.findById(s1.getId())).thenReturn(Optional.of(s1));
+        Sprint actual = service.updateSprint(s1);
+
+        assertEquals(s1.getId(), actual.getId());
+        assertEquals(s1.getName(), actual.getName());
+        assertEquals(s1.getStartDate(), actual.getStartDate());
+        assertEquals(s1.getEndDate(), actual.getEndDate());
+        assertEquals(s1.getStoryPointsToSpend(), actual.getStoryPointsToSpend());
+        assertEquals(s1.getTasks(), actual.getTasks());
+        assertEquals(s1.isActive(), actual.isActive());
     }
 }

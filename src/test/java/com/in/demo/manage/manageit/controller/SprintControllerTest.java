@@ -1,6 +1,7 @@
 package com.in.demo.manage.manageit.controller;
 
 import com.in.demo.manage.manageit.error.DataNotFoundException;
+import com.in.demo.manage.manageit.error.InvalidDataException;
 import com.in.demo.manage.manageit.mapper.SprintMapper;
 import com.in.demo.manage.manageit.model.Sprint;
 import com.in.demo.manage.manageit.model.dto.SprintDTO;
@@ -137,6 +138,112 @@ public class SprintControllerTest {
                 .then().assertThat()
                 .statusCode(HttpStatus.NO_CONTENT.value());
         Mockito.verify(service, Mockito.times(1)).deleteSprint(1L);
+    }
+
+    @Test
+    void testUpdateToActive_WhenSuccess() throws DataNotFoundException, InvalidDataException {
+        Sprint s1 = generateSampleSprint();
+        s1.setActive(true);
+
+        Mockito.when(service.changeToActive(1L)).thenReturn(s1);
+        SprintDTO mappedS1 = SprintMapper.mapToSprintDTO(s1);
+
+        given()
+                .mockMvc(mockMvc)
+                .when()
+                .put(SPRINTS_URI + "/1")
+                .then()
+                .status(HttpStatus.OK)
+                .body(".", notNullValue())
+                .body("name", equalTo(mappedS1.getName()))
+                .body("startDate", equalTo(mappedS1.getStartDate()))
+                .body("endDate", equalTo(mappedS1.getEndDate()))
+                .body("storyPointsToSpend", equalTo(mappedS1.getStoryPointsToSpend()))
+                .body("tasksIds", equalTo(mappedS1.getTasksIds()))
+                .body("active", equalTo(mappedS1.isActive()));
+    }
+
+    @Test
+    void testUpdateToActive_WhenOtherSprintIsActive() throws DataNotFoundException, InvalidDataException {
+
+        Mockito.when(service.changeToActive(1L)).thenThrow(new InvalidDataException("Other sprint is already active"));
+
+        given()
+                .mockMvc(mockMvc)
+                .when()
+                .put(SPRINTS_URI + "/1")
+                .then()
+                .status(HttpStatus.BAD_REQUEST)
+                .body(".", notNullValue())
+                .body("status", equalTo(400))
+                .body("message", equalTo("Other sprint is already active"));
+    }
+    @Test
+    void testUpdateToActive_WhenNothingWasFound() throws DataNotFoundException, InvalidDataException {
+
+        Mockito.when(service.changeToActive(1L)).thenThrow(new DataNotFoundException("There is no sprint with this id " + 1));
+
+        given()
+                .mockMvc(mockMvc)
+                .when()
+                .put(SPRINTS_URI + "/1")
+                .then()
+                .status(HttpStatus.BAD_REQUEST)
+                .body(".", notNullValue())
+                .body("status", equalTo(400))
+                .body("message", equalTo("There is no sprint with this id 1"));
+    }
+
+    @Test
+    void testFinishSprint_WhenSuccess() throws DataNotFoundException, InvalidDataException {
+        Sprint s1 = generateSampleSprint();
+
+        Mockito.when(service.changeToFinish(1L)).thenReturn(s1);
+        SprintDTO mappedS1 = SprintMapper.mapToSprintDTO(s1);
+
+        given()
+                .mockMvc(mockMvc)
+                .when()
+                .put(SPRINTS_URI + "/finish/1")
+                .then()
+                .status(HttpStatus.OK)
+                .body(".", notNullValue())
+                .body("name", equalTo(mappedS1.getName()))
+                .body("startDate", equalTo(mappedS1.getStartDate()))
+                .body("endDate", equalTo(mappedS1.getEndDate()))
+                .body("storyPointsToSpend", equalTo(mappedS1.getStoryPointsToSpend()))
+                .body("tasksIds", equalTo(mappedS1.getTasksIds()))
+                .body("active", equalTo(mappedS1.isActive()));
+    }
+
+    @Test
+    void testFinishSprint_WhenIsNotActive() throws DataNotFoundException, InvalidDataException {
+
+        Mockito.when(service.changeToFinish(1L)).thenThrow(new InvalidDataException("This sprint isn't even active"));
+
+        given()
+                .mockMvc(mockMvc)
+                .when()
+                .put(SPRINTS_URI + "/finish/1")
+                .then()
+                .body(".", notNullValue())
+                .body("message", equalTo("This sprint isn't even active"))
+                .body("status", equalTo(400));
+    }
+
+    @Test
+    void testFinishSprint_WhenNothingWasFound() throws DataNotFoundException, InvalidDataException {
+
+        Mockito.when(service.changeToFinish(1L)).thenThrow(new DataNotFoundException("There is no sprint with this id " + 1));
+
+        given()
+                .mockMvc(mockMvc)
+                .when()
+                .put(SPRINTS_URI + "/finish/1")
+                .then()
+                .body(".", notNullValue())
+                .body("message", equalTo("There is no sprint with this id 1"))
+                .body("status", equalTo(400));
     }
 
     @Test
