@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS sprints
     name                  VARCHAR(55) NOT NULL,
     start_date            DATETIME,
     end_date              DATETIME,
-    story_points_to_spend INT         NULL,
+    story_points_to_spend INT,
     is_active             BOOLEAN DEFAULT false
     );
 
@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS tasks
     story_points INT,
     progress     ENUM ('TO_DO', 'IN_PROGRESS', 'DONE'),
     priority     ENUM ('1', '2', '3', '4', '5'),
-    sprint_id    BIGINT      NOT NULL,
+    sprint_id    BIGINT NOT NULL,
     CONSTRAINT FK_SprintTask FOREIGN KEY (sprint_id) REFERENCES sprints (id)
     );
 
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS projects
     id          BIGINT AUTO_INCREMENT PRIMARY KEY,
     name        VARCHAR(55) NOT NULL,
     description VARCHAR(255),
-    owner_id    BIGINT      NOT NULL,
+    owner_id    BIGINT NOT NULL,
     CONSTRAINT FK_UserProject FOREIGN KEY (owner_id) REFERENCES users (id)
     );
 

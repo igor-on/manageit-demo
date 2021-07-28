@@ -1,12 +1,14 @@
 package com.in.demo.manage.manageit.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -33,5 +35,4 @@ public class User {
     @JsonIgnoreProperties(value = {"sprints"})
     @ManyToMany(mappedBy = "users")
     private List<Sprint> sprints;
-
 }
