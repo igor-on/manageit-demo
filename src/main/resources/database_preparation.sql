@@ -20,9 +20,7 @@ CREATE TABLE IF NOT EXISTS sprints
     start_date            DATETIME,
     end_date              DATETIME,
     story_points_to_spend INT         NULL,
-    is_active             BOOLEAN DEFAULT false,
-    user_id               BIGINT      NOT NULL,
-    CONSTRAINT FK_UserSprint1 FOREIGN KEY (user_id) REFERENCES users (id)
+    is_active             BOOLEAN DEFAULT false
     );
 
 CREATE TABLE IF NOT EXISTS tasks
@@ -48,8 +46,8 @@ CREATE TABLE IF NOT EXISTS projects
 
 CREATE TABLE IF NOT EXISTS sprints_users
 (
-    users_id   BIGINT,
     sprints_id BIGINT,
+    users_id   BIGINT,
     CONSTRAINT FK_SprintUser FOREIGN KEY (sprints_id) REFERENCES sprints (id),
     CONSTRAINT FK_UserSprint FOREIGN KEY (users_id) REFERENCES users (id)
     );
