@@ -2,6 +2,7 @@ package com.in.demo.manage.manageit.mapper;
 
 import com.in.demo.manage.manageit.model.Sprint;
 import com.in.demo.manage.manageit.model.Task;
+import com.in.demo.manage.manageit.model.User;
 import com.in.demo.manage.manageit.model.dto.SprintDTO;
 
 import java.time.format.DateTimeFormatter;
@@ -21,6 +22,10 @@ public class SprintMapper {
                 .map(Task::getId)
                 .collect(Collectors.toList());
 
+        List<Long> usersIds = sprint.getUsers().stream()
+                .map(User::getId)
+                .collect(Collectors.toList());
+
         Integer storyPoints = sprint.getStoryPointsToSpend();
 
         return SprintDTO.builder()
@@ -31,6 +36,7 @@ public class SprintMapper {
                 .storyPointsToSpend(storyPoints != null ? storyPoints.toString() : "")
                 .tasksIds(taskIds)
                 .isActive(sprint.isActive())
+                .usersIds(usersIds)
                 .build();
     }
 }

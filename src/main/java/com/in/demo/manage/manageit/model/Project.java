@@ -10,9 +10,9 @@ import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "projects")
-@NoArgsConstructor
 @AllArgsConstructor
 @Data
+@NoArgsConstructor
 public class Project {
 
     @Id
@@ -23,4 +23,6 @@ public class Project {
     private String name;
     @Size(min = 3, max = 255, message = "Project description has to be between 3 and 255 characters long")
     private String description;
+    @ManyToOne
+    private User owner;
 }

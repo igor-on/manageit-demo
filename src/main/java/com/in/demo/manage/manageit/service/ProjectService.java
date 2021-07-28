@@ -43,6 +43,7 @@ public class ProjectService {
         Project updatedProject = getProjectById(project.getId());
         updatedProject.setName(project.getName());
         updatedProject.setDescription(project.getDescription());
+        updatedProject.setOwner(project.getOwner());
         return updatedProject;
     }
 }

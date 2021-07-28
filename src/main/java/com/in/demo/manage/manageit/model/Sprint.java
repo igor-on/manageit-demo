@@ -32,6 +32,10 @@ public class Sprint {
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "sprint")
     private List<Task> tasks;
     private boolean isActive;
+    @Column(columnDefinition = "users")
+    @ManyToMany
+    private List<User> users;
+
 
     public Sprint() {
         tasks = new ArrayList<>();
