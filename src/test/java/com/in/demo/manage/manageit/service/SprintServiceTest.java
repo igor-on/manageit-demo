@@ -136,6 +136,50 @@ class SprintServiceTest {
     }
 
     @Test
+    void testChangeToActive_WhenNoDataIsFound() {
+        when(repository.findById(1L)).thenReturn(Optional.empty());
+        Throwable throwable = Assertions.assertThrows(DataNotFoundException.class, () -> service.changeToActive(1L));
+
+        assertThat(throwable)
+                .isExactlyInstanceOf(DataNotFoundException.class)
+                .hasMessage("There is no sprint with this id " + 1);
+    }
+
+    @Test
+    void testChangeToFinish_WhenSuccess() throws DataNotFoundException, InvalidDataException {
+        Sprint s1 = generateSampleSprint();
+        s1.setActive(true);
+
+        when(repository.findById(s1.getId())).thenReturn(Optional.of(s1));
+        Sprint actual = service.changeToFinish(s1.getId());
+
+        assertThat(actual.getId()).isEqualTo(s1.getId());
+        assertThat(actual.isActive()).isEqualTo(false);
+    }
+
+    @Test
+    void testChangeToFinish_WhenSprintIsNotActive() {
+        Sprint s1 = generateSampleSprint();
+
+        when(repository.findById(s1.getId())).thenReturn(Optional.of(s1));
+        Throwable throwable = Assertions.assertThrows(InvalidDataException.class, () -> service.changeToFinish(s1.getId()));
+
+        assertThat(throwable)
+                .isExactlyInstanceOf(InvalidDataException.class)
+                .hasMessage("This sprint isn't even active");
+    }
+
+    @Test
+    void testChangeToFinish_WhenNoDataIsFound() {
+        when(repository.findById(1L)).thenReturn(Optional.empty());
+        Throwable throwable = Assertions.assertThrows(DataNotFoundException.class, () -> service.changeToFinish(1L));
+
+        assertThat(throwable)
+                .isExactlyInstanceOf(DataNotFoundException.class)
+                .hasMessage("There is no sprint with this id " + 1);
+    }
+
+    @Test
     void testUpdateSprint_WhenSuccess() throws DataNotFoundException {
         var s1 = generateSampleSprint();
 
