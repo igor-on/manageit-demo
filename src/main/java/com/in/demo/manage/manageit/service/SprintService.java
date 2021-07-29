@@ -71,8 +71,6 @@ public class SprintService {
         updatedSprint.setStartDate(sprint.getStartDate());
         updatedSprint.setEndDate(sprint.getEndDate());
         updatedSprint.setStoryPointsToSpend(sprint.getStoryPointsToSpend()); // todo --------------???
-        updatedSprint.setActive(sprint.isActive());
-        updatedSprint.setUsers(sprint.getUsers());
         return updatedSprint;
     }
 }

@@ -9,12 +9,12 @@ import lombok.ToString;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "users")
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 @ToString(exclude = {"projects", "sprints"})
 public class User {
@@ -35,4 +35,9 @@ public class User {
     @JsonIgnoreProperties(value = {"sprints"})
     @ManyToMany(mappedBy = "users")
     private List<Sprint> sprints;
+
+    public User() {
+        projects = new ArrayList<>();
+        sprints = new ArrayList<>();
+    }
 }
