@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.in.demo.manage.manageit.data.TestsData.generateSampleProject;
 import static com.in.demo.manage.manageit.data.TestsData.generateSampleUser;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -20,7 +21,7 @@ class TaskMapperTest {
         Sprint testSprint = new Sprint(1L, "testSprint",
                 LocalDateTime.of(2021, 7, 10, 15, 30),
                 LocalDateTime.of(2021, 7, 17, 15, 30),
-                30, new ArrayList<>(), true, usersList);
+                30, new ArrayList<>(), true, usersList, generateSampleProject());
         Task testTask = new Task(2L, "task1", "desc1", 4,
                 Progress.TO_DO, Priority.TWO, testSprint);
 

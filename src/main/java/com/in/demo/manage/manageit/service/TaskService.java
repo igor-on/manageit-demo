@@ -48,9 +48,13 @@ public class TaskService {
         if (pointsLeft - task.getStoryPoints() < 0) {
             throw new NotEnoughPointsException("There is not enough points");
         }
+
+        //TODO --- nadpisac settery w taskach zeby robily to samo, tylko same
         relatedSprint.getTasks().add(task);
         relatedSprint.setStoryPointsToSpend(pointsLeft - task.getStoryPoints());
         task.setSprint(relatedSprint);
+
+
         return task;
     }
 

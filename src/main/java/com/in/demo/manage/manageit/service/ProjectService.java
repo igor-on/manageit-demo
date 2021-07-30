@@ -2,6 +2,7 @@ package com.in.demo.manage.manageit.service;
 
 import com.in.demo.manage.manageit.error.DataNotFoundException;
 import com.in.demo.manage.manageit.model.Project;
+import com.in.demo.manage.manageit.model.User;
 import com.in.demo.manage.manageit.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProjectService {
 
+    private final UserService userService;
     private final ProjectRepository repository;
 
     public List<Project> getAllProjects() {
@@ -31,6 +33,12 @@ public class ProjectService {
         if (project.getId() != null) {
             throw new IllegalArgumentException("Id is auto-generated, cannot be created manually");
         }
+
+        //TODO --- nadpisac settery w projektach zeby robily to samo, tylko same
+        User relatedUser = userService.getUserById(project.getOwner().getId());
+        project.setOwner(relatedUser);
+        relatedUser.getProjects().add(project);
+
         return repository.save(project);
     }
 

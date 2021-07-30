@@ -18,7 +18,7 @@ public class TestsData {
         User user = generateSampleUser();
         user.setId(1L);
         long projectId = (long) (new Random().nextFloat() * 100);
-        return new Project(projectId, "sample project", "project description", user);
+        return new Project(projectId, "sample project", "project description", user, new ArrayList<>());
     }
 
     public static Sprint generateSampleSprint() {
@@ -26,11 +26,13 @@ public class TestsData {
         User user = generateSampleUser();
         user.setId(1L);
         usersList.add(user);
+
+        Project p1 = generateSampleProject();
         long sprintId = (long) (new Random().nextFloat() * 100);
         return new Sprint(sprintId, "sample sprint",
                 LocalDateTime.of(2021, 7, 10, 15, 30),
                 LocalDateTime.of(2021, 7, 17, 15, 30),
-                30, new ArrayList<>(), false, usersList);
+                30, new ArrayList<>(), false, usersList, p1);
     }
 
     public static Task generateSampleTask() {
