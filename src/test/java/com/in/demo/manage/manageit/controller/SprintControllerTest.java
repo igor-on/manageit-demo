@@ -72,9 +72,8 @@ public class SprintControllerTest {
                 .body("[1].tasksIds", equalTo(sDTO2.getTasksIds()))
                 .body("[0].active", equalTo(sDTO1.isActive()))
                 .body("[1].active", equalTo(sDTO2.isActive()))
-                .body("[0].usersIds", equalTo(List.of(sDTO1.getUsersIds().get(0).intValue())))
-                .body("[1].usersIds", equalTo(List.of(sDTO2.getUsersIds().get(0).intValue())));
-                // todo ---- fix it to be sure that method does not fail if there is no usersIds or some tasksIds
+                .body("[0].usernames", equalTo(sDTO1.getUsernames()))
+                .body("[1].usernames", equalTo(sDTO2.getUsernames()));
     }
 
     @Test
@@ -98,7 +97,7 @@ public class SprintControllerTest {
                 .body("storyPointsToSpend", equalTo(sprintDTO.getStoryPointsToSpend()))
                 .body("tasksIds", equalTo(sprintDTO.getTasksIds()))
                 .body("active", equalTo(sprintDTO.isActive()))
-                .body("usersIds", equalTo(List.of(sprintDTO.getUsersIds().get(0).intValue())));
+                .body("usernames", equalTo(sprintDTO.getUsernames()));
     }
 
     @Test
@@ -125,7 +124,7 @@ public class SprintControllerTest {
                 .body("endDate", equalTo(sprintDTO.getEndDate()))
                 .body("tasksIds", equalTo(sprintDTO.getTasksIds()))
                 .body("active", equalTo(sprintDTO.isActive()))
-                .body("usersIds", equalTo(List.of(sprintDTO.getUsersIds().get(0).intValue())));
+                .body("usernames", equalTo(sprintDTO.getUsernames()));
     }
 
     @Test
@@ -160,7 +159,8 @@ public class SprintControllerTest {
                 .body("endDate", equalTo(mappedS1.getEndDate()))
                 .body("storyPointsToSpend", equalTo(mappedS1.getStoryPointsToSpend()))
                 .body("tasksIds", equalTo(mappedS1.getTasksIds()))
-                .body("active", equalTo(mappedS1.isActive()));
+                .body("active", equalTo(mappedS1.isActive()))
+                .body("usernames", equalTo(mappedS1.getUsernames()));
     }
 
     @Test
@@ -213,7 +213,8 @@ public class SprintControllerTest {
                 .body("endDate", equalTo(mappedS1.getEndDate()))
                 .body("storyPointsToSpend", equalTo(mappedS1.getStoryPointsToSpend()))
                 .body("tasksIds", equalTo(mappedS1.getTasksIds()))
-                .body("active", equalTo(mappedS1.isActive()));
+                .body("active", equalTo(mappedS1.isActive()))
+                .body("usernames", equalTo(mappedS1.getUsernames()));
     }
 
     @Test
@@ -268,6 +269,6 @@ public class SprintControllerTest {
                 .body("storyPointsToSpend", equalTo(sprintDTO.getStoryPointsToSpend()))
                 .body("tasksIds", equalTo(sprintDTO.getTasksIds()))
                 .body("active", equalTo(sprintDTO.isActive()))
-                .body("usersIds", equalTo(List.of(sprintDTO.getUsersIds().get(0).intValue())));
+                .body("usernames", equalTo(sprintDTO.getUsernames()));
     }
 }

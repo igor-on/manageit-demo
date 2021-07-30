@@ -57,32 +57,27 @@ public class UserControllerTest {
                 .statusCode(HttpStatus.OK.value())
                 .body(".", notNullValue())
                 .body("size()", is(2))
-                .body("[0].id", equalTo(uDTO1.getId().intValue()))
-                .body("[1].id", equalTo(uDTO2.getId().intValue()))
                 .body("[0].username", equalTo(uDTO1.getUsername()))
                 .body("[1].username", equalTo(uDTO2.getUsername()))
                 .body("[0].password", equalTo(uDTO1.getPassword()))
                 .body("[1].password", equalTo(uDTO2.getPassword()))
                 .body("[0].projectsIds", equalTo(uDTO1.getProjectsIds()))
                 .body("[1].projectsIds", equalTo(uDTO2.getProjectsIds()));
-                // todo ---- fix it to be sure that method does not fail if there is some projectsIds
     }
 
     @Test
-    void testGetUserById_WhenSuccess() throws UserNotFoundException {
+    void testGetUserByUsername_WhenSuccess() throws UserNotFoundException {
         User user = generateSampleUser();
-        Mockito.when(service.getUserById(1L)).thenReturn(user);
+        Mockito.when(service.getUserByUsername("username")).thenReturn(user);
 
         UserDTO userDTO = UserMapper.mapToUserDTO(user);
 
         given()
                 .mockMvc(mockMvc)
                 .contentType(ContentType.JSON)
-                .when().get(USERS_URI + "/1")
+                .when().get(USERS_URI + "/username")
                 .then().assertThat()
                 .statusCode(HttpStatus.OK.value())
-                .body("id", notNullValue())
-                .body("id", equalTo(userDTO.getId().intValue()))
                 .body("username", equalTo(userDTO.getUsername()))
                 .body("password", equalTo(userDTO.getPassword()))
                 .body("projectsIds", equalTo(userDTO.getProjectsIds()));
@@ -91,7 +86,6 @@ public class UserControllerTest {
     @Test
     void testRegisterNewUser_WhenSuccess() throws UserNotFoundException {
         var u1 = generateSampleUser();
-        u1.setId(null);
         User user = generateSampleUser();
 
         Mockito.when(service.addNewUser(u1)).thenReturn(user);
@@ -105,8 +99,6 @@ public class UserControllerTest {
                 .when().post(USERS_URI)
                 .then().assertThat()
                 .statusCode(HttpStatus.CREATED.value())
-                .body("id", notNullValue())
-                .body("id", equalTo(userDTO.getId().intValue()))
                 .body("username", equalTo(userDTO.getUsername()))
                 .body("password", equalTo(userDTO.getPassword()))
                 .body("projectsIds", equalTo(userDTO.getProjectsIds()));
@@ -114,14 +106,14 @@ public class UserControllerTest {
 
     @Test
     void testRemoveUser_WhenSuccess() {
-        Mockito.doNothing().when(service).deleteUser(1L);
+        Mockito.doNothing().when(service).deleteUser("username");
         given()
                 .mockMvc(mockMvc)
                 .contentType(ContentType.JSON)
-                .when().delete(USERS_URI + "/1")
+                .when().delete(USERS_URI + "/username")
                 .then().assertThat()
                 .statusCode(HttpStatus.NO_CONTENT.value());
-        Mockito.verify(service, Mockito.times(1)).deleteUser(1L);
+        Mockito.verify(service, Mockito.times(1)).deleteUser("username");
     }
 
     @Test
@@ -138,8 +130,6 @@ public class UserControllerTest {
                 .when().put(USERS_URI)
                 .then().assertThat()
                 .statusCode(HttpStatus.OK.value())
-                .body("id", notNullValue())
-                .body("id", equalTo(userDTO.getId().intValue()))
                 .body("username", equalTo(userDTO.getUsername()))
                 .body("password", equalTo(userDTO.getPassword()))
                 .body("projectsIds", equalTo(userDTO.getProjectsIds()));

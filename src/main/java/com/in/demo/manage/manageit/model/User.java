@@ -17,12 +17,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(exclude = {"projects", "sprints"})
-public class User {
+public class User  {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Column(unique = true)
     @NotBlank(message = "Username can't be empty")
     @Size(min = 3, max = 55, message = "Username has to be between 3 and 55 characters long")
     private String username;
@@ -35,4 +32,6 @@ public class User {
     @JsonIgnoreProperties(value = {"sprints"})
     @ManyToMany(mappedBy = "users")
     private List<Sprint> sprints;
+    @Column(nullable = false)
+    private boolean enabled;
 }

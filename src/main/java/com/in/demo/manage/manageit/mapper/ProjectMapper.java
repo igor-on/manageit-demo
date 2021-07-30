@@ -11,7 +11,7 @@ public class ProjectMapper {
                 .id(project.getId())
                 .name(project.getName())
                 .description(project.getDescription())
-                .ownerId(project.getOwner().getId())
+                .ownerUsername(project.getOwner().getUsername())
                 .build();
     }
 }

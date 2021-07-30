@@ -16,5 +16,5 @@ public class SprintDTO {
     private final String storyPointsToSpend;
     private final List<Long> tasksIds;
     private final boolean isActive;
-    private final List<Long> usersIds;
+    private final List<String> usernames;
 }

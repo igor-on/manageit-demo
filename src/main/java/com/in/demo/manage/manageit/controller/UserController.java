@@ -33,8 +33,8 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) throws UserNotFoundException {
-        User foundUser = service.getUserById(id);
+    public ResponseEntity<UserDTO> getUserByUsername(@PathVariable(value ="id") String username) throws UserNotFoundException {
+        User foundUser = service.getUserByUsername(username);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(UserMapper.mapToUserDTO(foundUser));
@@ -49,8 +49,8 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> removeUser(@PathVariable Long id) {
-        service.deleteUser(id);
+    public ResponseEntity<Void> removeUser(@PathVariable(value ="id") String username) {
+        service.deleteUser(username);
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
                 .build();

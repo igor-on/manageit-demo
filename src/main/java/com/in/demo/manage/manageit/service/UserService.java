@@ -19,8 +19,8 @@ public class UserService {
         return repository.findAll();
     }
 
-    public User getUserById(Long id) throws UserNotFoundException {
-        return repository.findById(id).orElseThrow(
+    public User getUserByUsername(String username) throws UserNotFoundException {
+        return repository.findById(username).orElseThrow(
                 () -> new UserNotFoundException("There is no such user"));
     }
 
@@ -28,20 +28,16 @@ public class UserService {
         if (user == null) {
             throw new UserNotFoundException("There is no user to add");
         }
-        if (user.getId() != null) {
-            throw new IllegalArgumentException("Id is auto-generated, cannot be created manually");
-        }
         return repository.save(user);
     }
 
-    public void deleteUser(Long id) {
-        repository.deleteById(id);
+    public void deleteUser(String username) {
+        repository.deleteById(username);
     }
 
     @Transactional
     public User updateUser(User user) throws UserNotFoundException {
-        User updatedUser = getUserById(user.getId());
-        updatedUser.setUsername(user.getUsername());
+        User updatedUser = getUserByUsername(user.getUsername());
         updatedUser.setPassword(user.getPassword());
         updatedUser.setProjects(user.getProjects());
         return updatedUser;

@@ -13,7 +13,6 @@ public class ProjectMapperTest {
     @Test
     void that_mapToProjectTO_worksCorrectly() {
         User owner = generateSampleUser();
-        long ownerId = owner.getId();
         Project testProject = new Project(1L, "sample project",
                 "project description", owner);
 
@@ -22,6 +21,6 @@ public class ProjectMapperTest {
         assertThat(actual.getId()).isEqualTo(1L);
         assertThat(actual.getName()).isEqualTo("sample project");
         assertThat(actual.getDescription()).isEqualTo("project description");
-        assertThat(actual.getOwnerId()).isEqualTo(ownerId);
+        assertThat(actual.getOwnerUsername()).isEqualTo("username");
     }
 }

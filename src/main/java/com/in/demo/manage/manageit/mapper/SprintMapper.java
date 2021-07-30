@@ -22,8 +22,8 @@ public class SprintMapper {
                 .map(Task::getId)
                 .collect(Collectors.toList());
 
-        List<Long> usersIds = sprint.getUsers().stream()
-                .map(User::getId)
+        List<String> usernames = sprint.getUsers().stream()
+                .map(User::getUsername)
                 .collect(Collectors.toList());
 
         Integer storyPoints = sprint.getStoryPointsToSpend();
@@ -36,7 +36,7 @@ public class SprintMapper {
                 .storyPointsToSpend(storyPoints != null ? storyPoints.toString() : "")
                 .tasksIds(taskIds)
                 .isActive(sprint.isActive())
-                .usersIds(usersIds)
+                .usernames(usernames)
                 .build();
     }
 }

@@ -16,7 +16,6 @@ public class UserMapper {
                 .collect(Collectors.toList());
 
         return UserDTO.builder()
-                .id(user.getId())
                 .username(user.getUsername())
                 .password(user.getPassword())
                 .projectsIds(projectsIds)

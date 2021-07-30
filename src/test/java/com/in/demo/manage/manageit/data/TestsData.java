@@ -10,13 +10,11 @@ import java.util.Random;
 public class TestsData {
 
     public static User generateSampleUser() {
-        long userId = (long) (new Random().nextFloat() * 100);
-        return new User(userId, "username", "password", new ArrayList<>(), new ArrayList<>());
+        return new User("username", "password", new ArrayList<>(), new ArrayList<>(), true);
     }
 
     public static Project generateSampleProject() {
         User user = generateSampleUser();
-        user.setId(1L);
         long projectId = (long) (new Random().nextFloat() * 100);
         return new Project(projectId, "sample project", "project description", user);
     }
@@ -24,7 +22,6 @@ public class TestsData {
     public static Sprint generateSampleSprint() {
         List<User> usersList = new ArrayList<>();
         User user = generateSampleUser();
-        user.setId(1L);
         usersList.add(user);
         long sprintId = (long) (new Random().nextFloat() * 100);
         return new Sprint(sprintId, "sample sprint",

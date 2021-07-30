@@ -9,7 +9,6 @@ import java.util.List;
 @Builder
 public class UserDTO {
 
-    private final Long id;
     private final String username;
     private final String password;
     private final List<Long> projectsIds;

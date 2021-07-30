@@ -17,7 +17,6 @@ class SprintMapperTest {
     void that_mapToSprintDTO_worksCorrectly() {
         List<User> usersList = new ArrayList<>();
         User user = generateSampleUser();
-        long userId = user.getId();
         usersList.add(user);
         Sprint testSprint = new Sprint(1L, "testSprint",
                 LocalDateTime.of(2021, 7, 10, 15, 30),
@@ -40,8 +39,8 @@ class SprintMapperTest {
                 .hasSize(2)
                 .containsExactly(2L, 4L);
         assertThat(actual.isActive()).isTrue();
-        assertThat(actual.getUsersIds())
+        assertThat(actual.getUsernames())
                 .hasSize(1)
-                .containsExactly(userId);
+                .containsExactly("username");
     }
 }
