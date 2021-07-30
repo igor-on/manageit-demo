@@ -1,9 +1,8 @@
 package com.in.demo.manage.manageit.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
@@ -29,10 +28,10 @@ public class User {
     @Column(nullable = false)
     @Size(min = 8, max = 55, message = "Password has to be at least 8 and max 55 characters long")
     private String password;
-    @JsonIgnoreProperties(value = {"projects"})
+    @JsonIgnore
     @OneToMany(mappedBy = "owner")
     private List<Project> projects;
-    @JsonIgnoreProperties(value = {"sprints"})
+    @JsonIgnore
     @ManyToMany(mappedBy = "users")
     private List<Sprint> sprints;
 
