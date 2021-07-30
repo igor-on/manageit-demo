@@ -63,8 +63,8 @@ public class ProjectControllerTest {
                 .body("[1].name", equalTo(pDTO2.getName()))
                 .body("[0].description", equalTo(pDTO1.getDescription()))
                 .body("[1].description", equalTo(pDTO2.getDescription()))
-                .body("[0].ownerId", equalTo(pDTO1.getOwnerId().intValue()))
-                .body("[1].ownerId", equalTo(pDTO2.getOwnerId().intValue()));
+                .body("[0].owner.username", equalTo(pDTO1.getOwner().getUsername()))
+                .body("[1].owner.password", equalTo(pDTO2.getOwner().getPassword()));
     }
 
     @Test
@@ -83,7 +83,7 @@ public class ProjectControllerTest {
                 .body("id", equalTo(projectDTO.getId().intValue()))
                 .body("name", equalTo(projectDTO.getName()))
                 .body("description", equalTo(projectDTO.getDescription()))
-                .body("ownerId", equalTo(projectDTO.getOwnerId().intValue()));
+                .body("owner.username", equalTo(projectDTO.getOwner().getUsername()));
     }
 
     @Test
@@ -106,7 +106,7 @@ public class ProjectControllerTest {
                 .body("id", equalTo(projectDTO.getId().intValue()))
                 .body("name", equalTo(projectDTO.getName()))
                 .body("description", equalTo(projectDTO.getDescription()))
-                .body("ownerId", equalTo(projectDTO.getOwnerId().intValue()));
+                .body("owner.username", equalTo(projectDTO.getOwner().getUsername()));
     }
 
     @Test
@@ -139,6 +139,6 @@ public class ProjectControllerTest {
                 .body("id", equalTo(projectDTO.getId().intValue()))
                 .body("name", equalTo(projectDTO.getName()))
                 .body("description", equalTo(projectDTO.getDescription()))
-                .body("ownerId", equalTo(projectDTO.getOwnerId().intValue()));
+                .body("owner.username", equalTo(projectDTO.getOwner().getUsername()));
     }
 }

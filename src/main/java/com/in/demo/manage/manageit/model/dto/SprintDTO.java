@@ -2,11 +2,13 @@ package com.in.demo.manage.manageit.model.dto;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.List;
 
 @Getter
 @Builder
+@ToString
 public class SprintDTO {
 
     private final Long id;
@@ -16,5 +18,5 @@ public class SprintDTO {
     private final String storyPointsToSpend;
     private final List<Long> tasksIds;
     private final boolean isActive;
-    private final List<Long> usersIds;
+    private final List<UserDTO> users;
 }
