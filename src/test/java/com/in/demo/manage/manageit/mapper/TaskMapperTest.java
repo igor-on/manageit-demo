@@ -32,7 +32,7 @@ class TaskMapperTest {
         assertThat(actual.getDescription()).isEqualTo("desc1");
         assertThat(actual.getStoryPoints()).isEqualTo("4");
         assertThat(actual.getProgress()).isEqualTo("TO_DO");
-        assertThat(actual.getPriority()).isEqualTo("2");
+        assertThat(actual.getPriority()).isEqualTo("1");
         assertThat(actual.getSprintId()).isEqualTo(1L);
     }
 }
