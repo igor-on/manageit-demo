@@ -11,14 +11,9 @@ public class UserMapper {
 
     public static UserDTO mapToUserDTO(User user) {
 
-        List<Long> projectsIds = user.getProjects().stream()
-                .map(Project::getId)
-                .collect(Collectors.toList());
-
         return UserDTO.builder()
                 .username(user.getUsername())
                 .password(user.getPassword())
-                .projectsIds(projectsIds)
                 .build();
     }
 }

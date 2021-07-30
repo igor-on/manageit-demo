@@ -26,8 +26,5 @@ public class UserMapperTest {
 
         assertThat(actual.getUsername()).isEqualTo("username");
         assertThat(actual.getPassword()).isEqualTo("password");
-        assertThat(actual.getProjectsIds())
-                .hasSize(1)
-                .containsExactly(projectId);
     }
 }

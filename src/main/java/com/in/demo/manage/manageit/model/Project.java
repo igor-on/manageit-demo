@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "projects")
@@ -25,4 +27,6 @@ public class Project {
     private String description;
     @ManyToOne
     private User owner;
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "project")
+    private List<Sprint> sprints = new ArrayList<>();
 }

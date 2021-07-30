@@ -1,23 +1,22 @@
 package com.in.demo.manage.manageit.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "users")
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 @ToString(exclude = {"projects", "sprints"})
-public class User  {
+public class User {
 
     @Id
     @NotBlank(message = "Username can't be empty")
@@ -26,12 +25,17 @@ public class User  {
     @Column(nullable = false)
     @Size(min = 8, max = 55, message = "Password has to be at least 8 and max 55 characters long")
     private String password;
-    @JsonIgnoreProperties(value = {"projects"})
+    @JsonIgnore
     @OneToMany(mappedBy = "owner")
     private List<Project> projects;
-    @JsonIgnoreProperties(value = {"sprints"})
+    @JsonIgnore
     @ManyToMany(mappedBy = "users")
     private List<Sprint> sprints;
     @Column(nullable = false)
     private boolean enabled;
+
+    public User() {
+        projects = new ArrayList<>();
+        sprints = new ArrayList<>();
+    }
 }

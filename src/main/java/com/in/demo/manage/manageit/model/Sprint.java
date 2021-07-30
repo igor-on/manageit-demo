@@ -3,6 +3,7 @@ package com.in.demo.manage.manageit.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
 import javax.validation.constraints.Future;
@@ -16,6 +17,7 @@ import java.util.List;
 @Table(name = "sprints")
 @AllArgsConstructor
 @Data
+@ToString(exclude = "project")
 public class Sprint {
 
     @Id
@@ -32,13 +34,14 @@ public class Sprint {
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "sprint")
     private List<Task> tasks;
     private boolean isActive;
-    @Column(columnDefinition = "users")
     @ManyToMany
     private List<User> users;
-
+    @ManyToOne
+    private Project project;
 
     public Sprint() {
         tasks = new ArrayList<>();
         isActive = false;
+        users = new ArrayList<>();
     }
 }

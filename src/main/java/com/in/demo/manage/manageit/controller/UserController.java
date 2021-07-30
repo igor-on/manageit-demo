@@ -1,5 +1,7 @@
 package com.in.demo.manage.manageit.controller;
 
+import com.in.demo.manage.manageit.error.DataNotFoundException;
+import com.in.demo.manage.manageit.error.InvalidDataException;
 import com.in.demo.manage.manageit.error.UserNotFoundException;
 import com.in.demo.manage.manageit.mapper.UserMapper;
 import com.in.demo.manage.manageit.model.User;
@@ -21,6 +23,7 @@ public class UserController {
 
     private final UserService service;
 
+    @CrossOrigin("http://localhost:4200")
     @GetMapping()
     public ResponseEntity<List<UserDTO>> getAllUsers() {
         List<User> allUsers = service.getAllUsers();
@@ -32,6 +35,7 @@ public class UserController {
         return ResponseEntity.ok(dtos);
     }
 
+    @CrossOrigin("http://localhost:4200")
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUserByUsername(@PathVariable(value ="id") String username) throws UserNotFoundException {
         User foundUser = service.getUserByUsername(username);
@@ -40,6 +44,25 @@ public class UserController {
                 .body(UserMapper.mapToUserDTO(foundUser));
     }
 
+    @CrossOrigin("http://localhost:4200")
+    @GetMapping("/by/{username}")
+    public ResponseEntity<UserDTO> getUserByUsername(@PathVariable String username) throws UserNotFoundException, DataNotFoundException {
+        User foundUser = service.getByUserName(username);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(UserMapper.mapToUserDTO(foundUser));
+    }
+
+    @CrossOrigin("http://localhost:4200")
+    @PostMapping("/login")
+    public ResponseEntity<UserDTO> login(@RequestBody User user) throws DataNotFoundException, InvalidDataException {
+        User validatedUser = service.validateUser(user.getUsername(), user.getPassword());
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(UserMapper.mapToUserDTO(validatedUser));
+    }
+
+    @CrossOrigin("http://localhost:4200")
     @PostMapping()
     public ResponseEntity<UserDTO> registerNewUser(@RequestBody User user) throws UserNotFoundException {
         User createdUser = service.addNewUser(user);
@@ -48,6 +71,7 @@ public class UserController {
                 .body(UserMapper.mapToUserDTO(createdUser));
     }
 
+    @CrossOrigin("http://localhost:4200")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> removeUser(@PathVariable(value ="id") String username) {
         service.deleteUser(username);
@@ -56,6 +80,7 @@ public class UserController {
                 .build();
     }
 
+    @CrossOrigin("http://localhost:4200")
     @PutMapping()
     public ResponseEntity<UserDTO> updateUserInfo(@RequestBody User user) throws UserNotFoundException {
         User updatedUser = service.updateUser(user);

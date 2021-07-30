@@ -19,36 +19,6 @@ public class DbScript {
         Sprint sampleSprint = new Sprint();
         Task sampleTask = new Task();
 
-        for(int i = 0; i < 10; i++) {
-            sampleSprint.setName("Sprint " + i);
-            sampleSprint.setStoryPointsToSpend(20 + i);
-            sampleSprint.setUsers(new ArrayList<>());
-
-            ResponseEntity<Sprint> response = restTemplate.postForEntity("http://localhost:8080/api/v1/sprints", sampleSprint, Sprint.class);
-            System.out.println(response);
-        }
-
-        System.out.println("--------------------------------------------------");
-
-        sampleSprint = new Sprint();
-
-        for(int i = 1; i < 21; i++) {
-            sampleSprint.setId((long) random.nextInt(10) + 1);
-
-            sampleTask.setName("task " + i);
-            sampleTask.setDescription("this is desc " + i);
-            sampleTask.setStoryPoints(random.nextInt(8) + 1);
-            sampleTask.setPriority(randomPriority(random.nextInt(5)  +1));
-            sampleTask.setProgress(Progress.TO_DO);
-            sampleTask.setSprint(sampleSprint);
-
-//            ResponseEntity<Task> response = restTemplate.postForEntity("http://localhost:8080/api/v1/tasks", sampleTask, Task.class);
-//
-//            System.out.println(response);
-        }
-
-        System.out.println("--------------------------------------------------");
-
         for (int i = 1; i < 5; i++) {
             sampleUser.setUsername("user" + i);
             sampleUser.setPassword("password" + i);
@@ -59,10 +29,11 @@ public class DbScript {
         }
 
         sampleUser = new User();
-
+        sampleProject = new Project();
+        sampleSprint = new Sprint();
+        sampleTask = new Task();
 
         System.out.println("--------------------------------------------------");
-
 
         for (int i = 1; i < 7; i++) {
             sampleUser.setId((long) random.nextInt(4) + 1);
@@ -76,7 +47,52 @@ public class DbScript {
             System.out.println(response);
         }
 
+        sampleUser = new User();
+        sampleProject = new Project();
+        sampleSprint = new Sprint();
+        sampleTask = new Task();
+
         System.out.println("--------------------------------------------------");
+
+        for (int i = 0; i < 10; i++) {
+            sampleProject.setId(3L);
+
+            sampleSprint.setName("Sprint " + i);
+            sampleSprint.setStoryPointsToSpend(20 + i);
+            sampleSprint.setUsers(new ArrayList<>());
+            sampleSprint.setProject(sampleProject);
+
+            ResponseEntity<Sprint> response = restTemplate.postForEntity("http://localhost:8080/api/v1/sprints", sampleSprint, Sprint.class);
+            System.out.println(response);
+        }
+
+        sampleUser = new User();
+        sampleProject = new Project();
+        sampleSprint = new Sprint();
+        sampleTask = new Task();
+
+        System.out.println("--------------------------------------------------");
+
+        for (int i = 1; i < 21; i++) {
+            sampleSprint.setId((long) random.nextInt(10) + 1);
+
+            sampleTask.setName("task " + i);
+            sampleTask.setDescription("this is desc " + i);
+            sampleTask.setStoryPoints(random.nextInt(8) + 1);
+            sampleTask.setPriority(randomPriority(random.nextInt(5) + 1));
+            sampleTask.setProgress(Progress.TO_DO);
+            sampleTask.setSprint(sampleSprint);
+
+//            ResponseEntity<Task> response = restTemplate.postForEntity("http://localhost:8080/api/v1/tasks", sampleTask, Task.class);
+//
+//            System.out.println(response);
+        }
+
+        System.out.println("--------------------------------------------------");
+
+        sampleUser = new User();
+
+
     }
 
 
@@ -92,7 +108,8 @@ public class DbScript {
                 return Priority.FOUR;
             case 5:
                 return Priority.FIVE;
-            default: return null;
+            default:
+                return null;
         }
     }
 }

@@ -16,18 +16,20 @@ public class TestsData {
     public static Project generateSampleProject() {
         User user = generateSampleUser();
         long projectId = (long) (new Random().nextFloat() * 100);
-        return new Project(projectId, "sample project", "project description", user);
+        return new Project(projectId, "sample project", "project description", user, new ArrayList<>());
     }
 
     public static Sprint generateSampleSprint() {
         List<User> usersList = new ArrayList<>();
         User user = generateSampleUser();
         usersList.add(user);
+
+        Project p1 = generateSampleProject();
         long sprintId = (long) (new Random().nextFloat() * 100);
         return new Sprint(sprintId, "sample sprint",
                 LocalDateTime.of(2021, 7, 10, 15, 30),
                 LocalDateTime.of(2021, 7, 17, 15, 30),
-                30, new ArrayList<>(), false, usersList);
+                30, new ArrayList<>(), false, usersList, p1);
     }
 
     public static Task generateSampleTask() {

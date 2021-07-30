@@ -30,7 +30,7 @@ public class Task {
     @Column(columnDefinition = "ENUM('TO_DO', 'IN_PROGRESS', 'DONE')")
     private Progress progress;
     @Enumerated(EnumType.ORDINAL)
-    @Column(columnDefinition = "ENUM('1', '2', '3', '4', '5')")
+    @Column(columnDefinition = "ENUM('0', '1', '2', '3', '4')")
     private Priority priority;
     @ManyToOne
     private Sprint sprint;
