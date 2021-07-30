@@ -19,7 +19,7 @@ public class ProjectMapper {
                 .id(project.getId())
                 .name(project.getName())
                 .description(project.getDescription())
-                .ownerUsername(project.getOwner().getUsername())
+                .owner(UserMapper.mapToUserDTO(project.getOwner()))
                 .sprints(mappedSprints)
                 .build();
     }

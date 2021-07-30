@@ -23,20 +23,16 @@ public class UserService {
 
     public User getUserByUsername(String username) throws UserNotFoundException {
         return repository.findById(username).orElseThrow(
-                () -> new UserNotFoundException("There is no such user"));
-    }
-
-    public User getByUserName(String username) throws DataNotFoundException {
-        return repository.getUserByUsername(username).orElseThrow(() -> new DataNotFoundException("There is no user with this username: " + username));
+                () -> new UserNotFoundException("There is no such user with this username: " + username));
     }
 
     public User validateUser(String username, String password) throws DataNotFoundException, InvalidDataException {
-        User foundUser = repository.getUserByUsername(username).orElseThrow(() -> new DataNotFoundException("There is no user with this username: " + username));
+        User foundUser = repository.findById(username).orElseThrow(
+                () -> new DataNotFoundException("There is no user with this username: " + username));
 
         if(!foundUser.getPassword().equals(password)) {
-            throw new InvalidDataException("O TY TY");
+            throw new InvalidDataException("Invalid data exception");
         }
-
         return foundUser;
     }
 

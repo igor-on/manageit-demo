@@ -35,7 +35,7 @@ public class ProjectService {
         }
 
         //TODO --- nadpisac settery w projektach zeby robily to samo, tylko same
-        User relatedUser = userService.getUserById(project.getOwner().getId());
+        User relatedUser = userService.getUserByUsername(project.getOwner().getUsername());
         project.setOwner(relatedUser);
         relatedUser.getProjects().add(project);
 

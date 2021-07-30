@@ -36,7 +36,6 @@ public class DbScript {
         System.out.println("--------------------------------------------------");
 
         for (int i = 1; i < 7; i++) {
-            sampleUser.setId((long) random.nextInt(4) + 1);
 
             sampleProject.setName("Project " + i);
             sampleProject.setDescription("Description " + i);

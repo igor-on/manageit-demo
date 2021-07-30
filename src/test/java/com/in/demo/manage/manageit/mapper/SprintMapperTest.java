@@ -40,8 +40,7 @@ class SprintMapperTest {
                 .hasSize(2)
                 .containsExactly(2L, 4L);
         assertThat(actual.isActive()).isTrue();
-        assertThat(actual.getUsernames())
-                .hasSize(1)
-                .containsExactly("username");
+        assertThat(actual.getUsers())
+                .hasSize(1);
     }
 }

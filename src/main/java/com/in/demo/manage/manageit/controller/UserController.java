@@ -45,15 +45,6 @@ public class UserController {
     }
 
     @CrossOrigin("http://localhost:4200")
-    @GetMapping("/by/{username}")
-    public ResponseEntity<UserDTO> getUserByUsername(@PathVariable String username) throws UserNotFoundException, DataNotFoundException {
-        User foundUser = service.getByUserName(username);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(UserMapper.mapToUserDTO(foundUser));
-    }
-
-    @CrossOrigin("http://localhost:4200")
     @PostMapping("/login")
     public ResponseEntity<UserDTO> login(@RequestBody User user) throws DataNotFoundException, InvalidDataException {
         User validatedUser = service.validateUser(user.getUsername(), user.getPassword());
