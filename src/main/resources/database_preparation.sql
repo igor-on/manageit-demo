@@ -11,7 +11,8 @@ CREATE TABLE IF NOT EXISTS users
 (
     username VARCHAR(55)  NOT NULL,
     password VARCHAR(100) NOT NULL,
-    enabled  BOOLEAN      NOT NULL
+    enabled  BOOLEAN      NOT NULL,
+    PRIMARY KEY (username)
 );
 
 CREATE TABLE IF NOT EXISTS authorities
@@ -28,8 +29,8 @@ CREATE TABLE IF NOT EXISTS projects
     id          BIGINT AUTO_INCREMENT PRIMARY KEY,
     name        VARCHAR(55) NOT NULL,
     description VARCHAR(255),
-    owner_id    BIGINT      NOT NULL,
-    CONSTRAINT FK_UserProject FOREIGN KEY (owner_id) REFERENCES users (username)
+    owner_username    VARCHAR(55)      NOT NULL,
+    CONSTRAINT FK_UserProject FOREIGN KEY (owner_username) REFERENCES users (username)
 );
 
 CREATE TABLE IF NOT EXISTS sprints
@@ -59,9 +60,9 @@ CREATE TABLE IF NOT EXISTS tasks
 CREATE TABLE IF NOT EXISTS sprints_users
 (
     sprints_id BIGINT,
-    users_id   BIGINT,
+    users_username   VARCHAR(55),
     CONSTRAINT FK_SprintUser FOREIGN KEY (sprints_id) REFERENCES sprints (id),
-    CONSTRAINT FK_UserSprint FOREIGN KEY (users_id) REFERENCES users (username)
+    CONSTRAINT FK_UserSprint FOREIGN KEY (users_username) REFERENCES users (username)
 );
 
 
