@@ -2,6 +2,7 @@ package com.in.demo.manage.manageit.service;
 
 import com.in.demo.manage.manageit.error.DataNotFoundException;
 import com.in.demo.manage.manageit.error.InvalidDataException;
+import com.in.demo.manage.manageit.model.Project;
 import com.in.demo.manage.manageit.model.Sprint;
 import com.in.demo.manage.manageit.repository.SprintRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SprintService {
 
+    private final ProjectService projectService;
     private final SprintRepository repository;
 
     public List<Sprint> getAllSprints() {
@@ -32,6 +34,13 @@ public class SprintService {
         if (sprint.getId() != null) {
             throw new IllegalArgumentException("Id is auto-generated, cannot be created manually");
         }
+
+        Project relatedProject = projectService.getProjectById(sprint.getProject().getId());
+        relatedProject.getSprints().add(sprint);
+        sprint.setProject(relatedProject);
+        sprint.getUsers().add(relatedProject.getOwner());
+        relatedProject.getOwner().getSprints().add(sprint);
+
         return repository.save(sprint);
     }
 

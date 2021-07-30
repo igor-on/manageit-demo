@@ -3,6 +3,7 @@ package com.in.demo.manage.manageit.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
 import javax.validation.constraints.Future;
@@ -16,6 +17,7 @@ import java.util.List;
 @Table(name = "sprints")
 @AllArgsConstructor
 @Data
+@ToString(exclude = "project")
 public class Sprint {
 
     @Id

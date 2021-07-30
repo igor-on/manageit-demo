@@ -1,9 +1,9 @@
 USE manage_it_db;
 
-DROP TABLE IF EXISTS projects;
-DROP TABLE IF EXISTS tasks;
 DROP TABLE IF EXISTS sprints_users;
+DROP TABLE IF EXISTS tasks;
 DROP TABLE IF EXISTS sprints;
+DROP TABLE IF EXISTS projects;
 DROP TABLE IF EXISTS users;
 
 CREATE TABLE IF NOT EXISTS users
@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS projects
     description VARCHAR(255),
     owner_id    BIGINT NOT NULL,
     CONSTRAINT FK_UserProject FOREIGN KEY (owner_id) REFERENCES users (id)
-);
+    );
 
 CREATE TABLE IF NOT EXISTS sprints
 (
@@ -53,5 +53,3 @@ CREATE TABLE IF NOT EXISTS sprints_users
     CONSTRAINT FK_SprintUser FOREIGN KEY (sprints_id) REFERENCES sprints (id),
     CONSTRAINT FK_UserSprint FOREIGN KEY (users_id) REFERENCES users (id)
     );
-
-
