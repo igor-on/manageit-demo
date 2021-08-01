@@ -17,7 +17,6 @@ public class UserMapperTest {
     void that_mapToUserDTO_worksCorrectly() {
         List<Project> projectsList = new ArrayList<>();
         var p1 = generateSampleProject();
-        long projectId = p1.getId();
         projectsList.add(p1);
 
         User testUser = new User("username", "password", projectsList, new ArrayList<>(), true);

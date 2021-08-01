@@ -15,6 +15,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +31,10 @@ public class SprintControllerTest {
 
     @MockBean
     private SprintService service;
+
+// todo ------------------  nie dzial porownanie oczekiwanych i otrzymywanych users
+    @MockBean
+    DataSource dataSource;
 
     @Autowired
     private MockMvc mockMvc;
@@ -74,6 +79,7 @@ public class SprintControllerTest {
                 .body("[1].active", equalTo(sDTO2.isActive()))
                 .body("[0].users", equalTo(sDTO1.getUsers()))
                 .body("[1].users", equalTo(sDTO2.getUsers()));
+
     }
 
     @Test
@@ -178,6 +184,7 @@ public class SprintControllerTest {
                 .body("status", equalTo(400))
                 .body("message", equalTo("Other sprint is already active"));
     }
+
     @Test
     void testUpdateToActive_WhenNothingWasFound() throws DataNotFoundException, InvalidDataException {
 

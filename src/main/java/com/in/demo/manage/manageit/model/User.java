@@ -31,7 +31,6 @@ public class User {
     @JsonIgnore
     @ManyToMany(mappedBy = "users")
     private List<Sprint> sprints;
-    @Column(nullable = false)
     private boolean enabled;
 
     public User() {

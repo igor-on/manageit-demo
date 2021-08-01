@@ -1,5 +1,6 @@
 package com.in.demo.manage.manageit.controller;
 
+import com.in.demo.manage.manageit.error.UserExistsException;
 import com.in.demo.manage.manageit.error.UserNotFoundException;
 import com.in.demo.manage.manageit.mapper.UserMapper;
 import com.in.demo.manage.manageit.model.User;
@@ -61,7 +62,6 @@ public class UserControllerTest {
                 .body("[1].username", equalTo(uDTO2.getUsername()))
                 .body("[0].password", equalTo(uDTO1.getPassword()))
                 .body("[1].password", equalTo(uDTO2.getPassword()));
-                // todo ---- fix it to be sure that method does not fail if there is some projectsIds
     }
 
     @Test
@@ -74,16 +74,15 @@ public class UserControllerTest {
         given()
                 .mockMvc(mockMvc)
                 .contentType(ContentType.JSON)
-                .when().get(USERS_URI + "/username")
+                .when().get(USERS_URI + "/by/username")
                 .then().assertThat()
                 .statusCode(HttpStatus.OK.value())
                 .body("username", equalTo(userDTO.getUsername()))
                 .body("password", equalTo(userDTO.getPassword()));
-//                .body("projectsIds", equalTo(userDTO.getProjectsIds()));
     }
 
     @Test
-    void testRegisterNewUser_WhenSuccess() throws UserNotFoundException {
+    void testRegisterNewUser_WhenSuccess() throws UserNotFoundException, UserExistsException {
         var u1 = generateSampleUser();
         User user = generateSampleUser();
 
@@ -100,7 +99,6 @@ public class UserControllerTest {
                 .statusCode(HttpStatus.CREATED.value())
                 .body("username", equalTo(userDTO.getUsername()))
                 .body("password", equalTo(userDTO.getPassword()));
-//                .body("projectsIds", equalTo(userDTO.getProjectsIds()));
     }
 
     @Test
@@ -131,6 +129,5 @@ public class UserControllerTest {
                 .statusCode(HttpStatus.OK.value())
                 .body("username", equalTo(userDTO.getUsername()))
                 .body("password", equalTo(userDTO.getPassword()));
-//                .body("projectsIds", equalTo(userDTO.getProjectsIds()));
     }
 }

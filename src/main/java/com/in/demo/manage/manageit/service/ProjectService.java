@@ -34,7 +34,9 @@ public class ProjectService {
             throw new IllegalArgumentException("Id is auto-generated, cannot be created manually");
         }
 
-        //TODO --- nadpisac settery w projektach zeby robily to samo, tylko same
+        // todo ---------- sprawdzic z entity czy spoko
+//        project.setOwner(userService.getUserByUsername(project.getOwner().getUsername()));
+
         User relatedUser = userService.getUserByUsername(project.getOwner().getUsername());
         project.setOwner(relatedUser);
         relatedUser.getProjects().add(project);

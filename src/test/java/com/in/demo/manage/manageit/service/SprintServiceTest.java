@@ -14,7 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static com.in.demo.manage.manageit.data.TestsData.*;
+import static com.in.demo.manage.manageit.data.TestsData.generateSampleSprint;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -74,7 +74,7 @@ class SprintServiceTest {
 
         when(repository.save(sprint)).thenReturn(generateSampleSprint());
 
-        Sprint actual = service.addNewSprint(sprint);
+        Sprint actual = service.addNewSprint(sprint); // todo ------------------------------
 
         assertNotNull(actual.getId());
         assertEquals(actual.getName(), sprint.getName());

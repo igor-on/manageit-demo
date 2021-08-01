@@ -1,5 +1,6 @@
 package com.in.demo.manage.manageit.service;
 
+import com.in.demo.manage.manageit.error.UserExistsException;
 import com.in.demo.manage.manageit.error.UserNotFoundException;
 import com.in.demo.manage.manageit.model.User;
 import com.in.demo.manage.manageit.repository.UserRepository;
@@ -67,7 +68,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void testAddNewUser_WhenSuccess() throws UserNotFoundException {
+    void testAddNewUser_WhenSuccess() throws UserNotFoundException, UserExistsException {
         var user = generateSampleUser();
 
         when(repository.save(user)).thenReturn(generateSampleUser());

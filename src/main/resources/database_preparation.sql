@@ -26,10 +26,10 @@ CREATE UNIQUE INDEX ix_auth_username ON authorities (username, authority);
 
 CREATE TABLE IF NOT EXISTS projects
 (
-    id          BIGINT AUTO_INCREMENT PRIMARY KEY,
-    name        VARCHAR(55) NOT NULL,
-    description VARCHAR(255),
-    owner_username    VARCHAR(55)      NOT NULL,
+    id             BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name           VARCHAR(55) NOT NULL,
+    description    VARCHAR(255),
+    owner_username VARCHAR(55) NOT NULL,
     CONSTRAINT FK_UserProject FOREIGN KEY (owner_username) REFERENCES users (username)
 );
 
@@ -59,8 +59,8 @@ CREATE TABLE IF NOT EXISTS tasks
 
 CREATE TABLE IF NOT EXISTS sprints_users
 (
-    sprints_id BIGINT,
-    users_username   VARCHAR(55),
+    sprints_id     BIGINT,
+    users_username VARCHAR(55),
     CONSTRAINT FK_SprintUser FOREIGN KEY (sprints_id) REFERENCES sprints (id),
     CONSTRAINT FK_UserSprint FOREIGN KEY (users_username) REFERENCES users (username)
 );
