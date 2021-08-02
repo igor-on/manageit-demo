@@ -55,7 +55,7 @@ public class SprintService {
     public Sprint changeToActive(long id) throws DataNotFoundException, InvalidDataException {
         Sprint sprintToActivate = getSprintById(id);
 
-        long activatedSprints = getAllSprints().stream().filter(Sprint::isActive).count();
+        long activatedSprints = sprintToActivate.getProject().getSprints().stream().filter(Sprint::isActive).count();
         if (activatedSprints >= 1) {
             throw new InvalidDataException("Other sprint is already active");
         }

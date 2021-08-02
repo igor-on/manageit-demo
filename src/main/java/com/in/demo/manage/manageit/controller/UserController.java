@@ -1,11 +1,8 @@
 package com.in.demo.manage.manageit.controller;
 
-import com.in.demo.manage.manageit.error.DataNotFoundException;
-import com.in.demo.manage.manageit.error.InvalidDataException;
 import com.in.demo.manage.manageit.error.UserExistsException;
 import com.in.demo.manage.manageit.error.UserNotFoundException;
 import com.in.demo.manage.manageit.mapper.UserMapper;
-import com.in.demo.manage.manageit.model.Task;
 import com.in.demo.manage.manageit.model.User;
 import com.in.demo.manage.manageit.model.dto.UserDTO;
 import com.in.demo.manage.manageit.service.UserService;

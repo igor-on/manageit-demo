@@ -25,9 +25,9 @@ class SprintMapperTest {
                 LocalDateTime.of(2021, 7, 17, 15, 30),
                 30, new ArrayList<>(), true, usersList, project);
         testSprint.getTasks().add(new Task(2L, "task1", "desc1", 4,
-                Progress.TO_DO, Priority.TWO, testSprint));
+                Progress.TO_DO, Priority.KINDA_IMPORTANT, testSprint));
         testSprint.getTasks().add(new Task(4L, "task2", "desc2", 2,
-                Progress.TO_DO, Priority.ONE, testSprint));
+                Progress.TO_DO, Priority.KINDA_IMPORTANT, testSprint));
 
         SprintDTO actual = SprintMapper.mapToSprintDTO(testSprint);
 

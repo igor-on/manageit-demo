@@ -36,6 +36,7 @@ public class DbScript {
         System.out.println("--------------------------------------------------");
 
         for (int i = 1; i < 7; i++) {
+            sampleUser.setUsername("user1");
 
             sampleProject.setName("Project " + i);
             sampleProject.setDescription("Description " + i);
@@ -98,15 +99,15 @@ public class DbScript {
     public static Priority randomPriority(int number) {
         switch (number) {
             case 1:
-                return Priority.ONE;
+                return Priority.NOT_AT_ALL;
             case 2:
-                return Priority.TWO;
+                return Priority.KINDA_IMPORTANT;
             case 3:
-                return Priority.THREE;
+                return Priority.IMPORTANT;
             case 4:
-                return Priority.FOUR;
+                return Priority.VERY_IMPORTANT;
             case 5:
-                return Priority.FIVE;
+                return Priority.ASAP;
             default:
                 return null;
         }

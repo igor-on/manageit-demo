@@ -37,6 +37,6 @@ public class TestsData {
     public static Task generateSampleTask() {
         long taskId = (long) (new Random().nextFloat() * 100);
         return new Task(taskId, "sample task", "task description", 3,
-                Progress.TO_DO, Priority.TWO, generateSampleSprint());
+                Progress.TO_DO, Priority.KINDA_IMPORTANT, generateSampleSprint());
     }
 }
