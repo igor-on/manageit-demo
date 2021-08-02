@@ -16,24 +16,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     DataSource dataSource;
 
-//    @Bean
-//    public BCryptPasswordEncoder getPasswordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
-
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth
                 .jdbcAuthentication()
                 .dataSource(dataSource);
     }
-////                .passwordEncoder(new BCryptPasswordEncoder());
-//    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-//                .csrf().disable()
+                .csrf().disable()
                 .httpBasic()
                 .and()
                 .cors()

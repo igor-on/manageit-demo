@@ -5,6 +5,7 @@ import com.in.demo.manage.manageit.error.InvalidDataException;
 import com.in.demo.manage.manageit.error.UserExistsException;
 import com.in.demo.manage.manageit.error.UserNotFoundException;
 import com.in.demo.manage.manageit.mapper.UserMapper;
+import com.in.demo.manage.manageit.model.Task;
 import com.in.demo.manage.manageit.model.User;
 import com.in.demo.manage.manageit.model.dto.UserDTO;
 import com.in.demo.manage.manageit.service.UserService;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,13 +46,9 @@ public class UserController {
                 .body(UserMapper.mapToUserDTO(foundUser));
     }
 
-    @PostMapping(value = "/login")
-    public ResponseEntity<UserDTO> login(@RequestBody User user) throws DataNotFoundException, InvalidDataException {
-        // todo ------ po skonfigurwaniu security do konca wywalic metode validate i ustawic jak trzeba
-        User validatedUser = service.validateUser(user.getUsername(), user.getPassword());
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(UserMapper.mapToUserDTO(validatedUser));
+    @GetMapping("/authenticate")
+    public ResponseEntity<Principal> authenticate(Principal user) {
+        return ResponseEntity.status(HttpStatus.OK).body(user);
     }
 
     @PostMapping()
