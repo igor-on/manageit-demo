@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS tasks
     description  VARCHAR(255) NOT NULL,
     story_points INT,
     progress     ENUM ('TO_DO', 'IN_PROGRESS', 'DONE'),
-    priority     ENUM ('0', '1', '2', '3', '4'),
+    priority     ENUM ('NOT_AT_ALL', 'KINDA_IMPORTANT', 'IMPORTANT', 'VERY_IMPORTANT', 'ASAP'),
     sprint_id    BIGINT       NOT NULL,
     CONSTRAINT FK_SprintTask FOREIGN KEY (sprint_id) REFERENCES sprints (id)
 );
