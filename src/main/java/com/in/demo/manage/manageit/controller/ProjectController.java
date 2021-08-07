@@ -15,13 +15,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
+@CrossOrigin("http://localhost:4200")
 @RequestMapping("/api/v1/projects")
 @RequiredArgsConstructor
 public class ProjectController {
 
     private final ProjectService service;
 
-    @CrossOrigin("http://localhost:4200")
     @GetMapping()
     public ResponseEntity<List<ProjectDTO>> getAllProjects() {
         List<Project> allProjects = service.getAllProjects();
@@ -33,7 +33,6 @@ public class ProjectController {
         return ResponseEntity.ok(dtos);
     }
 
-    @CrossOrigin("http://localhost:4200")
     @GetMapping("/{id}")
     public ResponseEntity<ProjectDTO> getProjectById(@PathVariable Long id) throws DataNotFoundException {
         Project foundProject = service.getProjectById(id);
@@ -42,7 +41,6 @@ public class ProjectController {
                 .body(ProjectMapper.mapToProjectDTO(foundProject));
     }
 
-    @CrossOrigin("http://localhost:4200")
     @PostMapping()
     public ResponseEntity<ProjectDTO> createProject(@RequestBody Project project) throws DataNotFoundException {
         Project createdProject = service.addNewProject(project);
@@ -51,16 +49,14 @@ public class ProjectController {
                 .body(ProjectMapper.mapToProjectDTO(createdProject));
     }
 
-    @CrossOrigin("http://localhost:4200")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> removeProject(@PathVariable Long id) {
+    public ResponseEntity<Void> removeProject(@PathVariable Long id) throws DataNotFoundException {
         service.deleteProject(id);
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
                 .build();
     }
 
-    @CrossOrigin("http://localhost:4200")
     @PutMapping()
     public ResponseEntity<ProjectDTO> updateProject(@RequestBody Project project) throws DataNotFoundException {
         Project updatedProject = service.updateProject(project);

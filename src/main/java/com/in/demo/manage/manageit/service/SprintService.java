@@ -35,6 +35,9 @@ public class SprintService {
             throw new IllegalArgumentException("Id is auto-generated, cannot be created manually");
         }
 
+        // todo ---------- sprawdzic z entity czy spoko
+//        sprint.setProject(projectService.getProjectById(sprint.getProject().getId()));
+
         Project relatedProject = projectService.getProjectById(sprint.getProject().getId());
         relatedProject.getSprints().add(sprint);
         sprint.setProject(relatedProject);
@@ -44,7 +47,16 @@ public class SprintService {
         return repository.save(sprint);
     }
 
-    public void deleteSprint(Long id) {
+    @Transactional
+    public void deleteSprint(Long id) throws DataNotFoundException {
+        Sprint foundSprint = getSprintById(id);
+        List<Sprint> relatedProjectSprints = foundSprint.getProject().getSprints();
+        relatedProjectSprints.remove(foundSprint);
+        foundSprint.getUsers().forEach(e -> {
+            List<Sprint> relatedUserSprints = e.getSprints();
+            relatedUserSprints.remove(foundSprint);
+        });
+
         repository.deleteById(id);
     }
 
@@ -52,8 +64,8 @@ public class SprintService {
     public Sprint changeToActive(long id) throws DataNotFoundException, InvalidDataException {
         Sprint sprintToActivate = getSprintById(id);
 
-        long activatedSprints = getAllSprints().stream().filter(Sprint::isActive).count();
-        if(activatedSprints >= 1) {
+        long activatedSprints = sprintToActivate.getProject().getSprints().stream().filter(Sprint::isActive).count();
+        if (activatedSprints >= 1) {
             throw new InvalidDataException("Other sprint is already active");
         }
 
@@ -65,7 +77,7 @@ public class SprintService {
     public Sprint changeToFinish(long id) throws DataNotFoundException, InvalidDataException {
         Sprint sprintToFinish = getSprintById(id);
 
-        if(!sprintToFinish.isActive()) {
+        if (!sprintToFinish.isActive()) {
             throw new InvalidDataException("This sprint isn't even active");
         }
 
@@ -79,7 +91,7 @@ public class SprintService {
         updatedSprint.setName(sprint.getName());
         updatedSprint.setStartDate(sprint.getStartDate());
         updatedSprint.setEndDate(sprint.getEndDate());
-        updatedSprint.setStoryPointsToSpend(sprint.getStoryPointsToSpend()); // todo --------------???
+        updatedSprint.setStoryPointsToSpend(sprint.getStoryPointsToSpend());
         return updatedSprint;
     }
 }

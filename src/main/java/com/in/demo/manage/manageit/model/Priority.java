@@ -4,13 +4,14 @@ import lombok.Getter;
 
 @Getter
 public enum Priority {
-    ONE(0),
-    TWO(1),
-    THREE(2),
-    FOUR(3),
-    FIVE(4);
+    NOT_AT_ALL(0),
+    KINDA_IMPORTANT(1),
+    IMPORTANT(2),
+    VERY_IMPORTANT(3),
+    ASAP(4);
 
     Integer decimal;
+
 
     Priority(Integer decimal) {
         this.decimal = decimal;

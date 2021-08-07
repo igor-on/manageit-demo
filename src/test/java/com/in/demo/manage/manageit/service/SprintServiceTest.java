@@ -2,6 +2,7 @@ package com.in.demo.manage.manageit.service;
 
 import com.in.demo.manage.manageit.error.DataNotFoundException;
 import com.in.demo.manage.manageit.error.InvalidDataException;
+import com.in.demo.manage.manageit.model.Project;
 import com.in.demo.manage.manageit.model.Sprint;
 import com.in.demo.manage.manageit.repository.SprintRepository;
 import org.junit.jupiter.api.Assertions;
@@ -14,7 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static com.in.demo.manage.manageit.data.TestsData.*;
+import static com.in.demo.manage.manageit.data.TestsData.generateSampleSprint;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -25,6 +26,8 @@ class SprintServiceTest {
 
     @Mock
     private SprintRepository repository;
+    @Mock
+    private ProjectService projectService;
 
     @InjectMocks
     private SprintService service;
@@ -69,21 +72,26 @@ class SprintServiceTest {
 
     @Test
     void testAddNewSprint_WhenSuccess() throws DataNotFoundException {
-        var sprint = generateSampleSprint();
-        sprint.setId(null);
+        Sprint s1 = generateSampleSprint();
+        s1.setId(null);
+        Sprint s2 = generateSampleSprint();
+        s2.getUsers().add(s1.getProject().getOwner());
 
-        when(repository.save(sprint)).thenReturn(generateSampleSprint());
+        when(projectService.getProjectById(s1.getProject().getId())).thenReturn(s1.getProject());
+        when(repository.save(s1)).thenReturn(s2);
 
-        Sprint actual = service.addNewSprint(sprint);
+        Sprint actual = service.addNewSprint(s1);
 
         assertNotNull(actual.getId());
-        assertEquals(actual.getName(), sprint.getName());
-        assertEquals(actual.getStartDate(), sprint.getStartDate());
-        assertEquals(actual.getEndDate(), sprint.getEndDate());
-        assertEquals(actual.getStoryPointsToSpend(), sprint.getStoryPointsToSpend());
-        assertEquals(actual.getTasks(), sprint.getTasks());
-        assertEquals(actual.isActive(), sprint.isActive());
-        assertEquals(actual.getUsers(), sprint.getUsers());
+        assertEquals(actual.getName(), s1.getName());
+        assertEquals(actual.getStartDate(), s1.getStartDate());
+        assertEquals(actual.getEndDate(), s1.getEndDate());
+        assertEquals(actual.getStoryPointsToSpend(), s1.getStoryPointsToSpend());
+        assertEquals(actual.getTasks(), s1.getTasks());
+        assertThat(actual.getTasks()).isEmpty();
+        assertEquals(actual.isActive(), s1.isActive());
+        assertThat(actual.getUsers()).hasSize(1);
+        assertEquals(actual.getUsers(), s1.getUsers());
     }
 
     @Test
@@ -93,9 +101,10 @@ class SprintServiceTest {
     }
 
     @Test
-    void testDeleteSprint_WhenSuccess() {
+    void testDeleteSprint_WhenSuccess() throws DataNotFoundException {
         var sprint = generateSampleSprint();
 
+        when(repository.findById(sprint.getId())).thenReturn(Optional.of(sprint));
         service.deleteSprint(sprint.getId());
 
         verify(repository, times(1)).deleteById(sprint.getId());
@@ -121,12 +130,14 @@ class SprintServiceTest {
     void testChangeToActive_WhenOtherSprintIsActive() {
         Sprint s1 = generateSampleSprint();
         Sprint s2 = generateSampleSprint();
+        s2.setProject(s1.getProject());
         s2.setActive(true);
         Sprint s3 = generateSampleSprint();
-        List<Sprint> sprintList = List.of(s1, s2, s3);
+        s3.setProject(s1.getProject());
+        Project relatedProject = s1.getProject();
+        relatedProject.getSprints().addAll(List.of(s1, s2, s3));
 
         when(repository.findById(s1.getId())).thenReturn(Optional.of(s1));
-        when(repository.findAll()).thenReturn(sprintList);
 
         Throwable throwable = Assertions.assertThrows(InvalidDataException.class, () -> service.changeToActive(s1.getId()));
 

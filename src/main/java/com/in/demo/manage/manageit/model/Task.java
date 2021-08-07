@@ -29,9 +29,17 @@ public class Task {
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "ENUM('TO_DO', 'IN_PROGRESS', 'DONE')")
     private Progress progress;
-    @Enumerated(EnumType.ORDINAL)
-    @Column(columnDefinition = "ENUM('0', '1', '2', '3', '4')")
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "ENUM('NOT_AT_ALL', 'KINDA_IMPORTANT', 'IMPORTANT', 'VERY_IMPORTANT', 'ASAP')")
     private Priority priority;
     @ManyToOne
     private Sprint sprint;
+
+    // todo ---------- sprawdzic z service czy spoko
+//    public void setSprint(Sprint sprint) {
+//        this.sprint = sprint;
+//        this.sprint.getTasks().add(this);
+//        int pointsLeft = this.sprint.getStoryPointsToSpend();
+//        this.sprint.setStoryPointsToSpend(pointsLeft - this.getStoryPoints());
+//    }
 }

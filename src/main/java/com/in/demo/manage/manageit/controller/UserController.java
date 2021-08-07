@@ -1,7 +1,6 @@
 package com.in.demo.manage.manageit.controller;
 
-import com.in.demo.manage.manageit.error.DataNotFoundException;
-import com.in.demo.manage.manageit.error.InvalidDataException;
+import com.in.demo.manage.manageit.error.UserExistsException;
 import com.in.demo.manage.manageit.error.UserNotFoundException;
 import com.in.demo.manage.manageit.mapper.UserMapper;
 import com.in.demo.manage.manageit.model.User;
@@ -13,17 +12,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
+@CrossOrigin("http://localhost:4200")
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService service;
 
-    @CrossOrigin("http://localhost:4200")
     @GetMapping()
     public ResponseEntity<List<UserDTO>> getAllUsers() {
         List<User> allUsers = service.getAllUsers();
@@ -35,52 +35,35 @@ public class UserController {
         return ResponseEntity.ok(dtos);
     }
 
-    @CrossOrigin("http://localhost:4200")
-    @GetMapping("/{id}")
-    public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) throws UserNotFoundException {
-        User foundUser = service.getUserById(id);
+    @GetMapping("/by/{id}")
+    public ResponseEntity<UserDTO> getUserByUsername(@PathVariable(value = "id") String username) throws UserNotFoundException {
+        User foundUser = service.getUserByUsername(username);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(UserMapper.mapToUserDTO(foundUser));
     }
 
-    @CrossOrigin("http://localhost:4200")
-    @GetMapping("/by/{username}")
-    public ResponseEntity<UserDTO> getUserByUsername(@PathVariable String username) throws UserNotFoundException, DataNotFoundException {
-        User foundUser = service.getByUserName(username);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(UserMapper.mapToUserDTO(foundUser));
+    @GetMapping("/authenticate")
+    public ResponseEntity<Principal> authenticate(Principal user) {
+        return ResponseEntity.status(HttpStatus.OK).body(user);
     }
 
-    @CrossOrigin("http://localhost:4200")
-    @PostMapping("/login")
-    public ResponseEntity<UserDTO> login(@RequestBody User user) throws DataNotFoundException, InvalidDataException {
-        User validatedUser = service.validateUser(user.getUsername(), user.getPassword());
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(UserMapper.mapToUserDTO(validatedUser));
-    }
-
-    @CrossOrigin("http://localhost:4200")
     @PostMapping()
-    public ResponseEntity<UserDTO> registerNewUser(@RequestBody User user) throws UserNotFoundException {
+    public ResponseEntity<UserDTO> registerNewUser(@RequestBody User user) throws UserNotFoundException, UserExistsException {
         User createdUser = service.addNewUser(user);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(UserMapper.mapToUserDTO(createdUser));
     }
 
-    @CrossOrigin("http://localhost:4200")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> removeUser(@PathVariable Long id) {
-        service.deleteUser(id);
+    public ResponseEntity<Void> removeUser(@PathVariable(value = "id") String username) {
+        service.deleteUser(username);
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
                 .build();
     }
 
-    @CrossOrigin("http://localhost:4200")
     @PutMapping()
     public ResponseEntity<UserDTO> updateUserInfo(@RequestBody User user) throws UserNotFoundException {
         User updatedUser = service.updateUser(user);

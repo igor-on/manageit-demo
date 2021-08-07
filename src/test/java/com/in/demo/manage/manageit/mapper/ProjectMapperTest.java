@@ -19,8 +19,8 @@ public class ProjectMapperTest {
         Sprint s1 = generateSampleSprint();
         Sprint s2 = generateSampleSprint();
         List<Sprint> sprintList = List.of(s1, s2);
-
         User owner = generateSampleUser();
+
         Project testProject = new Project(1L, "sample project",
                 "project description", owner, sprintList);
 
@@ -29,6 +29,10 @@ public class ProjectMapperTest {
         assertThat(actual.getId()).isEqualTo(1L);
         assertThat(actual.getName()).isEqualTo("sample project");
         assertThat(actual.getDescription()).isEqualTo("project description");
-        assertThat(actual.getOwner()).isEqualTo(owner);
+        assertThat(actual.getOwner().getPassword()).isEqualTo("password");
+        assertThat(actual.getOwner().getUsername()).contains("username");
+        assertThat(actual.getSprints()).hasSize(2);
+        assertThat(actual.getSprints().get(0).getStartDate()).isEqualTo("10 July 2021, 3:30 PM");
+        assertThat(actual.getSprints().get(0).getEndDate()).isEqualTo("17 July 2021, 3:30 PM");
     }
 }

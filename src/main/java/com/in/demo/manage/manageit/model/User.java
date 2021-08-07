@@ -19,14 +19,11 @@ import java.util.List;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Column(unique = true)
     @NotBlank(message = "Username can't be empty")
     @Size(min = 3, max = 55, message = "Username has to be between 3 and 55 characters long")
     private String username;
     @Column(nullable = false)
-    @Size(min = 8, max = 55, message = "Password has to be at least 8 and max 55 characters long")
+    @Size(min = 8, max = 155, message = "Password has to be at least 8 and max 155 characters long")
     private String password;
     @JsonIgnore
     @OneToMany(mappedBy = "owner")
@@ -34,9 +31,11 @@ public class User {
     @JsonIgnore
     @ManyToMany(mappedBy = "users")
     private List<Sprint> sprints;
+    private boolean enabled;
 
     public User() {
         projects = new ArrayList<>();
         sprints = new ArrayList<>();
+        enabled = true;
     }
 }

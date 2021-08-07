@@ -23,7 +23,7 @@ class TaskMapperTest {
                 LocalDateTime.of(2021, 7, 17, 15, 30),
                 30, new ArrayList<>(), true, usersList, generateSampleProject());
         Task testTask = new Task(2L, "task1", "desc1", 4,
-                Progress.TO_DO, Priority.TWO, testSprint);
+                Progress.TO_DO, Priority.KINDA_IMPORTANT, testSprint);
 
         TaskDTO actual = TaskMapper.mapToTaskDTO(testTask);
 

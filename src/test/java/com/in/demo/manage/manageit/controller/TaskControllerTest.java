@@ -9,11 +9,13 @@ import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,12 +25,15 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @WebMvcTest(TaskController.class)
+@AutoConfigureMockMvc(addFilters = false)
 public class TaskControllerTest {
 
     private static final String TASKS_URI = "/api/v1/tasks";
 
     @MockBean
     private TaskService service;
+    @MockBean
+    DataSource dataSource;
 
     @Autowired
     private MockMvc mockMvc;
@@ -102,6 +107,8 @@ public class TaskControllerTest {
         t1.setId(null);
         Task task = generateSampleTask();
 
+        System.out.println(task);
+
         Mockito.when(service.addNewTask(t1)).thenReturn(task);
         TaskDTO taskDTO = TaskMapper.mapToTaskDTO(task);
 
@@ -123,7 +130,7 @@ public class TaskControllerTest {
     }
 
     @Test
-    void testRemoveTask_WhenSuccess() {
+    void testRemoveTask_WhenSuccess() throws DataNotFoundException {
         Mockito.doNothing().when(service).deleteTask(1L);
         given()
                 .mockMvc(mockMvc)

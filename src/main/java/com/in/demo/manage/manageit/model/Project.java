@@ -29,4 +29,10 @@ public class Project {
     private User owner;
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "project")
     private List<Sprint> sprints = new ArrayList<>();
+
+    // todo ---------- sprawdzic z service czy spoko
+//    public void setOwner(User owner) {
+//        this.owner = owner;
+//        this.owner.getProjects().add(this);
+//    }
 }

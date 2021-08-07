@@ -16,18 +16,15 @@ class SprintMapperTest {
 
     @Test
     void that_mapToSprintDTO_worksCorrectly() {
-        List<User> usersList = new ArrayList<>();
-        User user = generateSampleUser();
-        long userId = user.getId();
-        usersList.add(user);
+        Project project = generateSampleProject();
         Sprint testSprint = new Sprint(1L, "testSprint",
                 LocalDateTime.of(2021, 7, 10, 15, 30),
                 LocalDateTime.of(2021, 7, 17, 15, 30),
-                30, new ArrayList<>(), true, usersList, generateSampleProject());
+                30, new ArrayList<>(), true, List.of(generateSampleUser()), project);
         testSprint.getTasks().add(new Task(2L, "task1", "desc1", 4,
-                Progress.TO_DO, Priority.TWO, testSprint));
+                Progress.TO_DO, Priority.KINDA_IMPORTANT, testSprint));
         testSprint.getTasks().add(new Task(4L, "task2", "desc2", 2,
-                Progress.TO_DO, Priority.ONE, testSprint));
+                Progress.TO_DO, Priority.KINDA_IMPORTANT, testSprint));
 
         SprintDTO actual = SprintMapper.mapToSprintDTO(testSprint);
 
@@ -41,8 +38,9 @@ class SprintMapperTest {
                 .hasSize(2)
                 .containsExactly(2L, 4L);
         assertThat(actual.isActive()).isTrue();
-//        assertThat(actual.getUsersIds())
-//                .hasSize(1)
-//                .containsExactly(userId);
+        assertThat(actual.getUsers())
+                .hasSize(1);
+        assertThat(actual.getUsers().get(0).getPassword()).isEqualTo("password");
+        assertThat(actual.getUsers().get(0).getUsername()).contains("username");
     }
 }

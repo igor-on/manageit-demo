@@ -10,11 +10,13 @@ import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,12 +26,16 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @WebMvcTest(SprintController.class)
+@AutoConfigureMockMvc(addFilters = false)
 public class SprintControllerTest {
 
     private static final String SPRINTS_URI = "/api/v1/sprints";
 
     @MockBean
     private SprintService service;
+
+    @MockBean
+    DataSource dataSource;
 
     @Autowired
     private MockMvc mockMvc;
@@ -71,10 +77,10 @@ public class SprintControllerTest {
                 .body("[0].tasksIds", equalTo(sDTO1.getTasksIds()))
                 .body("[1].tasksIds", equalTo(sDTO2.getTasksIds()))
                 .body("[0].active", equalTo(sDTO1.isActive()))
-                .body("[1].active", equalTo(sDTO2.isActive()));
-//                .body("[0].usersIds", equalTo(List.of(sDTO1.getUsersIds().get(0).intValue())))
-//                .body("[1].usersIds", equalTo(List.of(sDTO2.getUsersIds().get(0).intValue())));
-                // todo ---- fix it to be sure that method does not fail if there is no usersIds or some tasksIds
+                .body("[1].active", equalTo(sDTO2.isActive()))
+                .body("[0].users", equalTo(sDTO1.getUsers()))
+                .body("[1].users", equalTo(sDTO2.getUsers()));
+
     }
 
     @Test
@@ -97,8 +103,8 @@ public class SprintControllerTest {
                 .body("endDate", equalTo(sprintDTO.getEndDate()))
                 .body("storyPointsToSpend", equalTo(sprintDTO.getStoryPointsToSpend()))
                 .body("tasksIds", equalTo(sprintDTO.getTasksIds()))
-                .body("active", equalTo(sprintDTO.isActive()));
-//                .body("usersIds", equalTo(List.of(sprintDTO.getUsersIds().get(0).intValue())));
+                .body("active", equalTo(sprintDTO.isActive()))
+                .body("users", equalTo(sprintDTO.getUsers()));
     }
 
     @Test
@@ -124,12 +130,12 @@ public class SprintControllerTest {
                 .body("startDate", equalTo(sprintDTO.getStartDate()))
                 .body("endDate", equalTo(sprintDTO.getEndDate()))
                 .body("tasksIds", equalTo(sprintDTO.getTasksIds()))
-                .body("active", equalTo(sprintDTO.isActive()));
-//                .body("usersIds", equalTo(List.of(sprintDTO.getUsersIds().get(0).intValue())));
+                .body("active", equalTo(sprintDTO.isActive()))
+                .body("users", equalTo(sprintDTO.getUsers()));
     }
 
     @Test
-    void testRemoveSprint_WhenSuccess() {
+    void testRemoveSprint_WhenSuccess() throws DataNotFoundException {
         Mockito.doNothing().when(service).deleteSprint(1L);
         given()
                 .mockMvc(mockMvc)
@@ -160,7 +166,8 @@ public class SprintControllerTest {
                 .body("endDate", equalTo(mappedS1.getEndDate()))
                 .body("storyPointsToSpend", equalTo(mappedS1.getStoryPointsToSpend()))
                 .body("tasksIds", equalTo(mappedS1.getTasksIds()))
-                .body("active", equalTo(mappedS1.isActive()));
+                .body("active", equalTo(mappedS1.isActive()))
+                .body("users", equalTo(mappedS1.getUsers()));
     }
 
     @Test
@@ -178,6 +185,7 @@ public class SprintControllerTest {
                 .body("status", equalTo(400))
                 .body("message", equalTo("Other sprint is already active"));
     }
+
     @Test
     void testUpdateToActive_WhenNothingWasFound() throws DataNotFoundException, InvalidDataException {
 
@@ -213,7 +221,8 @@ public class SprintControllerTest {
                 .body("endDate", equalTo(mappedS1.getEndDate()))
                 .body("storyPointsToSpend", equalTo(mappedS1.getStoryPointsToSpend()))
                 .body("tasksIds", equalTo(mappedS1.getTasksIds()))
-                .body("active", equalTo(mappedS1.isActive()));
+                .body("active", equalTo(mappedS1.isActive()))
+                .body("users", equalTo(mappedS1.getUsers()));
     }
 
     @Test
@@ -250,8 +259,6 @@ public class SprintControllerTest {
     void testUpdateSprint_WhenSuccess() throws DataNotFoundException {
         var s1 = generateSampleSprint();
         var s2 = generateSampleSprint();
-        s2.setId(s1.getId());
-
         Mockito.when(service.updateSprint(s1)).thenReturn(s2);
         SprintDTO sprintDTO = SprintMapper.mapToSprintDTO(s2);
 
@@ -263,13 +270,13 @@ public class SprintControllerTest {
                 .then().assertThat()
                 .statusCode(HttpStatus.OK.value())
                 .body("id", notNullValue())
-                .body("id", equalTo(s1.getId().intValue()))
+                .body("id", equalTo(sprintDTO.getId().intValue()))
                 .body("name", equalTo(sprintDTO.getName()))
                 .body("startDate", equalTo(sprintDTO.getStartDate()))
                 .body("endDate", equalTo(sprintDTO.getEndDate()))
                 .body("storyPointsToSpend", equalTo(sprintDTO.getStoryPointsToSpend()))
                 .body("tasksIds", equalTo(sprintDTO.getTasksIds()))
-                .body("active", equalTo(sprintDTO.isActive()));
-//                .body("users", equalTo(sprintDTO.getUsers()));
+                .body("active", equalTo(sprintDTO.isActive()))
+                .body("users", equalTo(sprintDTO.getUsers()));
     }
 }

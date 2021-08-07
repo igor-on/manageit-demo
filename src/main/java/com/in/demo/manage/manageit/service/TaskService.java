@@ -27,7 +27,11 @@ public class TaskService {
                 () -> new DataNotFoundException("There is no task with this id " + id));
     }
 
-    public void deleteTask(Long id) {
+    @Transactional
+    public void deleteTask(Long id) throws DataNotFoundException {
+        Task foundTask = getTaskById(id);
+        foundTask.getSprint().getTasks().remove(foundTask);
+
         repository.deleteById(id);
     }
 
@@ -48,12 +52,9 @@ public class TaskService {
         if (pointsLeft - task.getStoryPoints() < 0) {
             throw new NotEnoughPointsException("There is not enough points");
         }
-
-        //TODO --- nadpisac settery w taskach zeby robily to samo, tylko same
         relatedSprint.getTasks().add(task);
         relatedSprint.setStoryPointsToSpend(pointsLeft - task.getStoryPoints());
         task.setSprint(relatedSprint);
-
 
         return task;
     }

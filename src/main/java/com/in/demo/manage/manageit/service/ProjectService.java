@@ -34,15 +34,21 @@ public class ProjectService {
             throw new IllegalArgumentException("Id is auto-generated, cannot be created manually");
         }
 
-        //TODO --- nadpisac settery w projektach zeby robily to samo, tylko same
-        User relatedUser = userService.getUserById(project.getOwner().getId());
+        // todo ---------- sprawdzic z entity czy spoko
+//        project.setOwner(userService.getUserByUsername(project.getOwner().getUsername()));
+
+        User relatedUser = userService.getUserByUsername(project.getOwner().getUsername());
         project.setOwner(relatedUser);
         relatedUser.getProjects().add(project);
 
         return repository.save(project);
     }
 
-    public void deleteProject(Long id) {
+    @Transactional
+    public void deleteProject(Long id) throws DataNotFoundException {
+        Project foundProject = getProjectById(id);
+        foundProject.getOwner().getProjects().remove(foundProject);
+
         repository.deleteById(id);
     }
 

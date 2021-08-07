@@ -44,4 +44,12 @@ public class Sprint {
         isActive = false;
         users = new ArrayList<>();
     }
+
+    // todo ---------- sprawdzic z service czy spoko
+//    public void setProject(Project project) {
+//        this.project = project;
+//        this.project.getSprints().add(this);
+//        this.project.getOwner().getSprints().add(this);
+//        this.getUsers().add(this.project.getOwner());
+//    }
 }

@@ -2,7 +2,8 @@ package com.in.demo.manage.manageit.service;
 
 import com.in.demo.manage.manageit.error.DataNotFoundException;
 import com.in.demo.manage.manageit.error.NotEnoughPointsException;
-import com.in.demo.manage.manageit.model.*;
+import com.in.demo.manage.manageit.model.Sprint;
+import com.in.demo.manage.manageit.model.Task;
 import com.in.demo.manage.manageit.repository.TaskRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -14,7 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static com.in.demo.manage.manageit.data.TestsData.*;
+import static com.in.demo.manage.manageit.data.TestsData.generateSampleTask;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -117,9 +118,10 @@ class TaskServiceTest {
     }
 
     @Test
-    void testDeleteSprint_WhenSuccess() {
+    void testDeleteSprint_WhenSuccess() throws DataNotFoundException {
         var task = generateSampleTask();
 
+        when(repository.findById(task.getId())).thenReturn(Optional.of(task));
         service.deleteTask(task.getId());
 
         verify(repository, times(1)).deleteById(task.getId());

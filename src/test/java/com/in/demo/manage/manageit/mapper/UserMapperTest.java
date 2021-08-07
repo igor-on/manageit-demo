@@ -17,15 +17,12 @@ public class UserMapperTest {
     void that_mapToUserDTO_worksCorrectly() {
         List<Project> projectsList = new ArrayList<>();
         var p1 = generateSampleProject();
-        long projectId = p1.getId();
         projectsList.add(p1);
 
-        User testUser = new User(1L, "username", "password", projectsList, new ArrayList<>());
+        User testUser = new User("username", "password", projectsList, new ArrayList<>(), true);
 
         UserDTO actual = UserMapper.mapToUserDTO(testUser);
 
-
-        assertThat(actual.getId()).isEqualTo(1L);
         assertThat(actual.getUsername()).isEqualTo("username");
         assertThat(actual.getPassword()).isEqualTo("password");
     }
