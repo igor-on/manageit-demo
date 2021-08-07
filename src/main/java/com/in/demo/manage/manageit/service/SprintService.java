@@ -47,7 +47,16 @@ public class SprintService {
         return repository.save(sprint);
     }
 
-    public void deleteSprint(Long id) {
+    @Transactional
+    public void deleteSprint(Long id) throws DataNotFoundException {
+        Sprint foundSprint = getSprintById(id);
+        List<Sprint> relatedProjectSprints = foundSprint.getProject().getSprints();
+        relatedProjectSprints.remove(foundSprint);
+        foundSprint.getUsers().forEach(e -> {
+            List<Sprint> relatedUserSprints = e.getSprints();
+            relatedUserSprints.remove(foundSprint);
+        });
+
         repository.deleteById(id);
     }
 

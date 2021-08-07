@@ -50,7 +50,7 @@ public class TaskController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> removeTask(@PathVariable Long id) {
+    public ResponseEntity<Void> removeTask(@PathVariable Long id) throws DataNotFoundException {
         service.deleteTask(id);
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)

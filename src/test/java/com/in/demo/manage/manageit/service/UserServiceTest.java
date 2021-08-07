@@ -2,7 +2,9 @@ package com.in.demo.manage.manageit.service;
 
 import com.in.demo.manage.manageit.error.UserExistsException;
 import com.in.demo.manage.manageit.error.UserNotFoundException;
+import com.in.demo.manage.manageit.model.Authorities;
 import com.in.demo.manage.manageit.model.User;
+import com.in.demo.manage.manageit.repository.AuthRepository;
 import com.in.demo.manage.manageit.repository.UserRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -25,6 +27,8 @@ public class UserServiceTest {
 
     @Mock
     private UserRepository repository;
+    @Mock
+    private AuthRepository authRepository;
 
     @InjectMocks
     private UserService service;
@@ -71,6 +75,7 @@ public class UserServiceTest {
     void testAddNewUser_WhenSuccess() throws UserNotFoundException, UserExistsException {
         var user = generateSampleUser();
 
+        when(authRepository.save(any())).thenReturn(new Authorities());
         when(repository.save(user)).thenReturn(user);
 
         User actual = service.addNewUser(user);

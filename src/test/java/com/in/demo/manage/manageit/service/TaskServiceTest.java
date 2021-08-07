@@ -118,9 +118,10 @@ class TaskServiceTest {
     }
 
     @Test
-    void testDeleteSprint_WhenSuccess() {
+    void testDeleteSprint_WhenSuccess() throws DataNotFoundException {
         var task = generateSampleTask();
 
+        when(repository.findById(task.getId())).thenReturn(Optional.of(task));
         service.deleteTask(task.getId());
 
         verify(repository, times(1)).deleteById(task.getId());

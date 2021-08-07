@@ -17,13 +17,10 @@ class SprintMapperTest {
     @Test
     void that_mapToSprintDTO_worksCorrectly() {
         Project project = generateSampleProject();
-        List<User> usersList = new ArrayList<>();
-        User user = generateSampleUser();
-        usersList.add(user);
         Sprint testSprint = new Sprint(1L, "testSprint",
                 LocalDateTime.of(2021, 7, 10, 15, 30),
                 LocalDateTime.of(2021, 7, 17, 15, 30),
-                30, new ArrayList<>(), true, usersList, project);
+                30, new ArrayList<>(), true, List.of(generateSampleUser()), project);
         testSprint.getTasks().add(new Task(2L, "task1", "desc1", 4,
                 Progress.TO_DO, Priority.KINDA_IMPORTANT, testSprint));
         testSprint.getTasks().add(new Task(4L, "task2", "desc2", 2,
@@ -43,6 +40,7 @@ class SprintMapperTest {
         assertThat(actual.isActive()).isTrue();
         assertThat(actual.getUsers())
                 .hasSize(1);
-// todo                .containsExactly(UserMapper.mapToUserDTO(user));
+        assertThat(actual.getUsers().get(0).getPassword()).isEqualTo("password");
+        assertThat(actual.getUsers().get(0).getUsername()).contains("username");
     }
 }

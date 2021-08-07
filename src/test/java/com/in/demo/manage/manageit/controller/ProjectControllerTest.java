@@ -6,10 +6,10 @@ import com.in.demo.manage.manageit.model.Project;
 import com.in.demo.manage.manageit.model.dto.ProjectDTO;
 import com.in.demo.manage.manageit.service.ProjectService;
 import io.restassured.http.ContentType;
-import io.restassured.http.Header;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
@@ -25,15 +25,15 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @WebMvcTest(ProjectController.class)
+@AutoConfigureMockMvc(addFilters = false)
 public class ProjectControllerTest {
 
     private static final String PROJECTS_URI = "/api/v1/projects";
 
     @MockBean
     private ProjectService service;
-
     @MockBean
-    DataSource dataSource;
+    private DataSource dataSource;
 
     @Autowired
     private MockMvc mockMvc;
@@ -68,8 +68,8 @@ public class ProjectControllerTest {
                 .body("[1].name", equalTo(pDTO2.getName()))
                 .body("[0].description", equalTo(pDTO1.getDescription()))
                 .body("[1].description", equalTo(pDTO2.getDescription()))
-// todo               .body("[0].owner", equalTo(pDTO1.getOwner()))
-//                .body("[1].owner", equalTo(pDTO2.getOwner()))
+                .body("[0].owner.username", equalTo(pDTO1.getOwner().getUsername()))
+                .body("[1].owner.username", equalTo(pDTO2.getOwner().getUsername()))
                 .body("[0].sprints", equalTo(pDTO1.getSprints()))
                 .body("[1].sprints", equalTo(pDTO2.getSprints()));
     }
@@ -90,7 +90,7 @@ public class ProjectControllerTest {
                 .body("id", equalTo(projectDTO.getId().intValue()))
                 .body("name", equalTo(projectDTO.getName()))
                 .body("description", equalTo(projectDTO.getDescription()))
-// todo                .body("owner", equalTo(projectDTO.getOwner()))
+                .body("owner.username", equalTo(projectDTO.getOwner().getUsername()))
                 .body("sprints", equalTo(projectDTO.getSprints()));
     }
 
@@ -114,13 +114,13 @@ public class ProjectControllerTest {
                 .body("id", equalTo(projectDTO.getId().intValue()))
                 .body("name", equalTo(projectDTO.getName()))
                 .body("description", equalTo(projectDTO.getDescription()))
-//  todo              .body("owner", equalTo(projectDTO.getOwner()))
+                .body("owner.username", equalTo(projectDTO.getOwner().getUsername()))
                 .body("sprints", equalTo(projectDTO.getSprints()));
     }
 
 
     @Test
-    void testRemoveProject_WhenSuccess() {
+    void testRemoveProject_WhenSuccess() throws DataNotFoundException {
         Mockito.doNothing().when(service).deleteProject(1L);
         given()
                 .mockMvc(mockMvc)
@@ -149,7 +149,7 @@ public class ProjectControllerTest {
                 .body("id", equalTo(projectDTO.getId().intValue()))
                 .body("name", equalTo(projectDTO.getName()))
                 .body("description", equalTo(projectDTO.getDescription()))
-//  todo              .body("owner", equalTo(projectDTO.getOwner()))
+                .body("owner.username", equalTo(projectDTO.getOwner().getUsername()))
                 .body("sprints", equalTo(projectDTO.getSprints()));
     }
 }

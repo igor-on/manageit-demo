@@ -27,7 +27,11 @@ public class TaskService {
                 () -> new DataNotFoundException("There is no task with this id " + id));
     }
 
-    public void deleteTask(Long id) {
+    @Transactional
+    public void deleteTask(Long id) throws DataNotFoundException {
+        Task foundTask = getTaskById(id);
+        foundTask.getSprint().getTasks().remove(foundTask);
+
         repository.deleteById(id);
     }
 
@@ -51,15 +55,6 @@ public class TaskService {
         relatedSprint.getTasks().add(task);
         relatedSprint.setStoryPointsToSpend(pointsLeft - task.getStoryPoints());
         task.setSprint(relatedSprint);
-
-        // todo ---------- sprawdzic z entity czy spoko
-//        int pointsLeft = sprintService
-//                .getSprintById(task.getSprint().getId()).getStoryPointsToSpend();
-//        if (pointsLeft - task.getStoryPoints() < 0) {
-//            throw new NotEnoughPointsException("There is not enough points");
-//        }
-//        // todo - powtorzenie obejsc jakos jak cos
-//        task.setSprint(sprintService.getSprintById(task.getSprint().getId()));
 
         return task;
     }

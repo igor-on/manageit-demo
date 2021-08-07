@@ -4,7 +4,6 @@ import com.in.demo.manage.manageit.model.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class TestsData {
@@ -23,16 +22,11 @@ public class TestsData {
     }
 
     public static Sprint generateSampleSprint() {
-        List<User> usersList = new ArrayList<>();
-        User user = generateSampleUser();
-        usersList.add(user);
-
-        Project p1 = generateSampleProject();
         long sprintId = (long) (new Random().nextFloat() * 100);
         return new Sprint(sprintId, "sample sprint",
                 LocalDateTime.of(2021, 7, 10, 15, 30),
                 LocalDateTime.of(2021, 7, 17, 15, 30),
-                30, new ArrayList<>(), false, usersList, p1);
+                30, new ArrayList<>(), false, new ArrayList<>(), generateSampleProject());
     }
 
     public static Task generateSampleTask() {

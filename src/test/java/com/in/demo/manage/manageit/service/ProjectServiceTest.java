@@ -24,6 +24,8 @@ class ProjectServiceTest {
 
     @Mock
     private ProjectRepository repository;
+    @Mock
+    private UserService userService;
 
     @InjectMocks
     private ProjectService service;
@@ -43,6 +45,8 @@ class ProjectServiceTest {
 
         assertThat(actual.get(0))
                 .isEqualTo(p1);
+        assertThat(actual.get(0).getOwner().getPassword())
+                .isEqualTo("password");
     }
 
     @Test
@@ -68,17 +72,21 @@ class ProjectServiceTest {
 
     @Test
     void testAddNewProject_WhenSuccess() throws DataNotFoundException {
-        var project = generateSampleProject();
-        project.setId(null);
+        var p1 = generateSampleProject();
+        p1.setId(null);
+        Project p2 = generateSampleProject();
+        p2.setOwner(p1.getOwner());
 
-        when(repository.save(project)).thenReturn(generateSampleProject());
+        when(userService.getUserByUsername(p1.getOwner().getUsername())).thenReturn(p1.getOwner());
+        when(repository.save(p1)).thenReturn(p2);
 
-        Project actual = service.addNewProject(project); // Todo------------------------
+        Project actual = service.addNewProject(p1);
 
         assertNotNull(actual.getId());
-        assertEquals(actual.getName(), project.getName());
-        assertEquals(actual.getDescription(), project.getDescription());
-        assertEquals(actual.getOwner(), project.getOwner());
+        assertEquals(actual.getName(), p1.getName());
+        assertEquals(actual.getDescription(), p1.getDescription());
+        assertEquals(actual.getOwner(), p1.getOwner());
+        assertThat(actual.getSprints()).isEmpty();
     }
 
     @Test
@@ -89,9 +97,10 @@ class ProjectServiceTest {
 
 
     @Test
-    void testDeleteProject_WhenSuccess() {
+    void testDeleteProject_WhenSuccess() throws DataNotFoundException {
         var project = generateSampleProject();
 
+        when(repository.findById(project.getId())).thenReturn(Optional.of(project));
         service.deleteProject(project.getId());
 
         verify(repository, times(1)).deleteById(project.getId());

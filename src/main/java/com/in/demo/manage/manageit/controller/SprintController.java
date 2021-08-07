@@ -51,7 +51,7 @@ public class SprintController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> removeSprint(@PathVariable Long id) {
+    public ResponseEntity<Void> removeSprint(@PathVariable Long id) throws DataNotFoundException {
         service.deleteSprint(id);
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)

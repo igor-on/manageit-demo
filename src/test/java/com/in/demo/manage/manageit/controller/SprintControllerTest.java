@@ -10,6 +10,7 @@ import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @WebMvcTest(SprintController.class)
+@AutoConfigureMockMvc(addFilters = false)
 public class SprintControllerTest {
 
     private static final String SPRINTS_URI = "/api/v1/sprints";
@@ -32,7 +34,6 @@ public class SprintControllerTest {
     @MockBean
     private SprintService service;
 
-// todo ------------------  nie dzial porownanie oczekiwanych i otrzymywanych users
     @MockBean
     DataSource dataSource;
 
@@ -134,7 +135,7 @@ public class SprintControllerTest {
     }
 
     @Test
-    void testRemoveSprint_WhenSuccess() {
+    void testRemoveSprint_WhenSuccess() throws DataNotFoundException {
         Mockito.doNothing().when(service).deleteSprint(1L);
         given()
                 .mockMvc(mockMvc)

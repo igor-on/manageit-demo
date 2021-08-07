@@ -44,7 +44,11 @@ public class ProjectService {
         return repository.save(project);
     }
 
-    public void deleteProject(Long id) {
+    @Transactional
+    public void deleteProject(Long id) throws DataNotFoundException {
+        Project foundProject = getProjectById(id);
+        foundProject.getOwner().getProjects().remove(foundProject);
+
         repository.deleteById(id);
     }
 

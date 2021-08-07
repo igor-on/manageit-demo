@@ -50,7 +50,7 @@ public class ProjectController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> removeProject(@PathVariable Long id) {
+    public ResponseEntity<Void> removeProject(@PathVariable Long id) throws DataNotFoundException {
         service.deleteProject(id);
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
