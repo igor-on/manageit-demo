@@ -71,7 +71,7 @@ public class UserServiceTest {
     void testAddNewUser_WhenSuccess() throws UserNotFoundException, UserExistsException {
         var user = generateSampleUser();
 
-        when(repository.save(user)).thenReturn(generateSampleUser());
+        when(repository.save(user)).thenReturn(user);
 
         User actual = service.addNewUser(user);
 

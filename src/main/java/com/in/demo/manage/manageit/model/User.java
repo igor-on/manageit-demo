@@ -36,5 +36,6 @@ public class User {
     public User() {
         projects = new ArrayList<>();
         sprints = new ArrayList<>();
+        enabled = true;
     }
 }

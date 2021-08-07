@@ -10,7 +10,8 @@ import java.util.Random;
 public class TestsData {
 
     public static User generateSampleUser() {
-        return new User("username", "password", new ArrayList<>(),
+        long userId = (long) (new Random().nextFloat() * 100);
+        return new User("username" + userId, "password", new ArrayList<>(),
                 new ArrayList<>(), true);
     }
 
