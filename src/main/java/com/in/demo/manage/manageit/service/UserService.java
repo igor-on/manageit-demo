@@ -7,6 +7,7 @@ import com.in.demo.manage.manageit.model.User;
 import com.in.demo.manage.manageit.repository.AuthRepository;
 import com.in.demo.manage.manageit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -18,6 +19,7 @@ public class UserService {
 
     private final UserRepository repository;
     private final AuthRepository authRepository;
+    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(BCryptPasswordEncoder.BCryptVersion.$2A, 13);
 
     public List<User> getAllUsers() {
         return repository.findAll();
@@ -34,7 +36,7 @@ public class UserService {
             throw new UserNotFoundException("There is no user to add!");
         }
 
-        user.setPassword("{noop}" + user.getPassword());
+        user.setPassword(encoder.encode(user.getPassword()));
         User savedUser = repository.save(user);
         authRepository.save(new Authorities(savedUser.getUsername(), "user"));
 

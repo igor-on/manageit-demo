@@ -23,7 +23,7 @@ public class User {
     @Size(min = 3, max = 55, message = "Username has to be between 3 and 55 characters long")
     private String username;
     @Column(nullable = false)
-    @Size(min = 8, max = 55, message = "Password has to be at least 8 and max 55 characters long")
+    @Size(min = 8, max = 155, message = "Password has to be at least 8 and max 155 characters long")
     private String password;
     @JsonIgnore
     @OneToMany(mappedBy = "owner")
