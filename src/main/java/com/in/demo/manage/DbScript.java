@@ -22,7 +22,7 @@ public class DbScript {
         for (int i = 1; i < 5; i++) {
             sampleUser.setUsername("user" + i);
             sampleUser.setPassword("password" + i);
-            sampleUser.setProjects(new ArrayList<>());
+//            sampleUser.setProjects(new ArrayList<>());
             sampleUser.setSprints(new ArrayList<>());
             ResponseEntity<User> response = restTemplate.postForEntity("http://localhost:8080/api/v1/users", sampleUser, User.class);
             System.out.println(response);

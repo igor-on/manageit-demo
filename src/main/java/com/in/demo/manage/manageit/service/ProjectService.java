@@ -18,7 +18,7 @@ public class ProjectService {
     private final ProjectRepository repository;
 
     public List<Project> getAllProjects() {
-        return repository.findAll();
+        return repository.findAllProjects();
     }
 
     public Project getProjectById(Long id) throws DataNotFoundException {
@@ -39,16 +39,12 @@ public class ProjectService {
 
         User relatedUser = userService.getUserByUsername(project.getOwner().getUsername());
         project.setOwner(relatedUser);
-        relatedUser.getProjects().add(project);
 
         return repository.save(project);
     }
 
     @Transactional
-    public void deleteProject(Long id) throws DataNotFoundException {
-        Project foundProject = getProjectById(id);
-        foundProject.getOwner().getProjects().remove(foundProject);
-
+    public void deleteProject(Long id) {
         repository.deleteById(id);
     }
 

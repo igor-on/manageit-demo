@@ -10,7 +10,7 @@ public class TestsData {
 
     public static User generateSampleUser() {
         long userId = (long) (new Random().nextFloat() * 100);
-        return new User("username" + userId, "password", new ArrayList<>(),
+        return new User("username" + userId, "password",
                 new ArrayList<>(), true);
     }
 
