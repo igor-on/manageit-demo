@@ -15,7 +15,7 @@ import java.util.List;
 @Table(name = "users")
 @Data
 @AllArgsConstructor
-@ToString(exclude = {"projects", "sprints"})
+@ToString(exclude = {"sprints"})
 public class User {
 
     @Id
@@ -26,15 +26,11 @@ public class User {
     @Size(min = 8, max = 155, message = "Password has to be at least 8 and max 155 characters long")
     private String password;
     @JsonIgnore
-    @OneToMany(mappedBy = "owner")
-    private List<Project> projects;
-    @JsonIgnore
     @ManyToMany(mappedBy = "users")
     private List<Sprint> sprints;
     private boolean enabled;
 
     public User() {
-        projects = new ArrayList<>();
         sprints = new ArrayList<>();
         enabled = true;
     }

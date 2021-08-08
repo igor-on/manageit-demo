@@ -36,7 +36,7 @@ class SprintServiceTest {
     void testGetAllSprints() {
         var s1 = generateSampleSprint();
         var s2 = generateSampleSprint();
-        when(repository.findAll()).thenReturn(List.of(s1, s2));
+        when(repository.findAllSprints()).thenReturn(List.of(s1, s2));
 
         List<Sprint> actual = service.getAllSprints();
 

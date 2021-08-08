@@ -37,7 +37,7 @@ public class UserServiceTest {
     void testGetAllUsers() {
         var u1 = generateSampleUser();
         var u2 = generateSampleUser();
-        when(repository.findAll()).thenReturn(List.of(u1, u2));
+        when(repository.findAllUsers()).thenReturn(List.of(u1, u2));
 
         List<User> actual = service.getAllUsers();
 
@@ -82,7 +82,6 @@ public class UserServiceTest {
 
         assertEquals(actual.getUsername(), user.getUsername());
         assertEquals(actual.getPassword(), user.getPassword());
-        assertEquals(actual.getProjects(), user.getProjects());
     }
 
     @Test
@@ -110,6 +109,5 @@ public class UserServiceTest {
 
         assertEquals(u1.getUsername(), u2.getUsername());
         assertEquals(u1.getPassword(), u2.getPassword());
-        assertEquals(u1.getProjects(), u2.getProjects());
     }
 }

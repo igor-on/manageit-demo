@@ -34,7 +34,7 @@ class ProjectServiceTest {
     void testGetAllProjects() {
         var p1 = generateSampleProject();
         var p2 = generateSampleProject();
-        when(repository.findAll()).thenReturn(List.of(p1, p2));
+        when(repository.findAllProjects()).thenReturn(List.of(p1, p2));
 
         List<Project> actual = service.getAllProjects();
 
@@ -97,10 +97,9 @@ class ProjectServiceTest {
 
 
     @Test
-    void testDeleteProject_WhenSuccess() throws DataNotFoundException {
+    void testDeleteProject_WhenSuccess() {
         var project = generateSampleProject();
 
-        when(repository.findById(project.getId())).thenReturn(Optional.of(project));
         service.deleteProject(project.getId());
 
         verify(repository, times(1)).deleteById(project.getId());

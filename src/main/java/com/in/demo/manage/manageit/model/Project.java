@@ -26,6 +26,7 @@ public class Project {
     @Size(min = 3, max = 255, message = "Project description has to be between 3 and 255 characters long")
     private String description;
     @ManyToOne
+    @JoinColumn(name = "owner_username")
     private User owner;
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "project")
     private List<Sprint> sprints = new ArrayList<>();

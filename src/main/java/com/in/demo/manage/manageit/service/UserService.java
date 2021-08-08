@@ -22,7 +22,7 @@ public class UserService {
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(BCryptPasswordEncoder.BCryptVersion.$2A, 13);
 
     public List<User> getAllUsers() {
-        return repository.findAll();
+        return repository.findAllUsers();
     }
 
     public User getUserByUsername(String username) throws UserNotFoundException {
@@ -51,7 +51,6 @@ public class UserService {
     public User updateUser(User user) throws UserNotFoundException {
         User updatedUser = getUserByUsername(user.getUsername());
         updatedUser.setPassword(user.getPassword());
-        updatedUser.setProjects(user.getProjects());
         return updatedUser;
     }
 
