@@ -30,7 +30,9 @@ public class TaskService {
     @Transactional
     public void deleteTask(Long id) throws DataNotFoundException {
         Task foundTask = getTaskById(id);
+        if(foundTask.getSprint() != null) {
         foundTask.getSprint().getTasks().remove(foundTask);
+        }
 
         repository.deleteById(id);
     }
@@ -42,11 +44,15 @@ public class TaskService {
         if (task.getId() != null) {
             throw new IllegalArgumentException("Id is auto-generated, cannot be created manually");
         }
-        task = assignTaskToSprint(task);
+        assignTaskToSprint(task);
         return repository.save(task);
     }
 
-    public Task assignTaskToSprint(Task task) throws DataNotFoundException {
+    public void assignTaskToSprint(Task task) throws DataNotFoundException {
+        if (task.getSprint().getId() == null) {
+            task.setSprint(null);
+            return;
+        }
         Sprint relatedSprint = sprintService.getSprintById(task.getSprint().getId());
         int pointsLeft = relatedSprint.getStoryPointsToSpend();
         if (pointsLeft - task.getStoryPoints() < 0) {
@@ -55,8 +61,6 @@ public class TaskService {
         relatedSprint.getTasks().add(task);
         relatedSprint.setStoryPointsToSpend(pointsLeft - task.getStoryPoints());
         task.setSprint(relatedSprint);
-
-        return task;
     }
 
     @Transactional
