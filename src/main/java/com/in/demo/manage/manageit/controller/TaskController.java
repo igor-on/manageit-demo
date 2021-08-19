@@ -57,6 +57,14 @@ public class TaskController {
                 .build();
     }
 
+    @PutMapping("/assign/sprint")
+    public ResponseEntity<Void> assignToSprint(@RequestBody Task task) throws DataNotFoundException {
+        service.assignTaskToSprint(task, task.getSprint().getId());
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .build();
+    }
+
     @PutMapping()
     public ResponseEntity<TaskDTO> updateTask(@RequestBody Task task) throws DataNotFoundException {
         Task updatedTask = service.updateTask(task);

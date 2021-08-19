@@ -19,7 +19,7 @@ public class SprintService {
     private final SprintRepository repository;
 
     public List<Sprint> getAllSprints() {
-        return repository.findAllSprints();
+        return repository.findAll();
     }
 
     public Sprint getSprintById(Long id) throws DataNotFoundException {

@@ -22,7 +22,7 @@ public class UserService {
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(BCryptPasswordEncoder.BCryptVersion.$2A, 13);
 
     public List<User> getAllUsers() {
-        return repository.findAllUsers();
+        return repository.findAll();
     }
 
     public User getUserByUsername(String username) throws UserNotFoundException {

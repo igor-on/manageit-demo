@@ -44,16 +44,22 @@ public class TaskService {
         if (task.getId() != null) {
             throw new IllegalArgumentException("Id is auto-generated, cannot be created manually");
         }
-        assignTaskToSprint(task);
+        assignTaskToSprint(task, task.getSprint().getId());
         return repository.save(task);
     }
 
-    public void assignTaskToSprint(Task task) throws DataNotFoundException {
+    @Transactional
+    public void assignTaskToSprint(Task task, Long sprintId) throws DataNotFoundException {
         if (task.getSprint().getId() == null) {
             task.setSprint(null);
             return;
         }
-        Sprint relatedSprint = sprintService.getSprintById(task.getSprint().getId());
+        if(task.getId() != null) {
+            task = getTaskById(task.getId());
+        }
+        System.out.println(task);
+
+        Sprint relatedSprint = sprintService.getSprintById(sprintId);
         int pointsLeft = relatedSprint.getStoryPointsToSpend();
         if (pointsLeft - task.getStoryPoints() < 0) {
             throw new NotEnoughPointsException("There is not enough points");
