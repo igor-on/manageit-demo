@@ -37,7 +37,7 @@ public class UserServiceTest {
     void testGetAllUsers() {
         var u1 = generateSampleUser();
         var u2 = generateSampleUser();
-        when(repository.findAllUsers()).thenReturn(List.of(u1, u2));
+        when(repository.findAll()).thenReturn(List.of(u1, u2));
 
         List<User> actual = service.getAllUsers();
 

@@ -30,8 +30,8 @@ public class TaskService {
     @Transactional
     public void deleteTask(Long id) throws DataNotFoundException {
         Task foundTask = getTaskById(id);
-        if(foundTask.getSprint() != null) {
-        foundTask.getSprint().getTasks().remove(foundTask);
+        if (foundTask.getSprint() != null) {
+            foundTask.getSprint().getTasks().remove(foundTask);
         }
 
         repository.deleteById(id);
@@ -54,7 +54,7 @@ public class TaskService {
             task.setSprint(null);
             return;
         }
-        if(task.getId() != null) {
+        if (task.getId() != null) {
             task = getTaskById(task.getId());
         }
         System.out.println(task);
@@ -62,7 +62,7 @@ public class TaskService {
         Sprint relatedSprint = sprintService.getSprintById(sprintId);
         int pointsLeft = relatedSprint.getStoryPointsToSpend();
         if (pointsLeft - task.getStoryPoints() < 0) {
-            throw new NotEnoughPointsException("There is not enough points");
+            throw new NotEnoughPointsException("There is not enough points in sprint");
         }
         relatedSprint.getTasks().add(task);
         relatedSprint.setStoryPointsToSpend(pointsLeft - task.getStoryPoints());
@@ -74,7 +74,21 @@ public class TaskService {
         Task updatedTask = getTaskById(task.getId());
         updatedTask.setName(task.getName());
         updatedTask.setDescription(task.getDescription());
+
+        //Liczy różnice punktów między nową a starą wersją zadania
+        int pointsDifference = task.getStoryPoints() - updatedTask.getStoryPoints();
         updatedTask.setStoryPoints(task.getStoryPoints());
+
+        Sprint relatedSprint = updatedTask.getSprint();
+        if (relatedSprint != null) {
+            //Odejmuje różnice od aktualnej ilosci punktow w sprincie i sprawdza poprawność wyniku
+            int storyPointsInSprint = relatedSprint.getStoryPointsToSpend() - pointsDifference;
+            if (storyPointsInSprint < 0 || storyPointsInSprint > 50) {
+                throw new NotEnoughPointsException("There is not enough points in sprint");
+            }
+            relatedSprint.setStoryPointsToSpend(storyPointsInSprint);
+        }
+
         updatedTask.setProgress(task.getProgress());
         updatedTask.setPriority(task.getPriority());
         return updatedTask;
