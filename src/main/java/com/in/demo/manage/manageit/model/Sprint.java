@@ -17,7 +17,7 @@ import java.util.List;
 @Table(name = "sprints")
 @AllArgsConstructor
 @Data
-@ToString(exclude = "project")
+@ToString(exclude = {"project", "tasks"})
 public class Sprint {
 
     @Id

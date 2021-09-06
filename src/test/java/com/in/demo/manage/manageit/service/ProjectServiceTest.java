@@ -34,7 +34,7 @@ class ProjectServiceTest {
     void testGetAllProjects() {
         var p1 = generateSampleProject();
         var p2 = generateSampleProject();
-        when(repository.findAllProjects()).thenReturn(List.of(p1, p2));
+        when(repository.findAll()).thenReturn(List.of(p1, p2));
 
         List<Project> actual = service.getAllProjects();
 

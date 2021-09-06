@@ -17,8 +17,9 @@ public class ProjectService {
     private final UserService userService;
     private final ProjectRepository repository;
 
+    //TODO Zmiana była konieczna problem N+1 nadal aktualny
     public List<Project> getAllProjects() {
-        return repository.findAllProjects();
+        return repository.findAll();
     }
 
     public Project getProjectById(Long id) throws DataNotFoundException {

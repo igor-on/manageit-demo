@@ -30,7 +30,9 @@ public class TaskService {
     @Transactional
     public void deleteTask(Long id) throws DataNotFoundException {
         Task foundTask = getTaskById(id);
-        foundTask.getSprint().getTasks().remove(foundTask);
+        if (foundTask.getSprint() != null) {
+            foundTask.getSprint().getTasks().remove(foundTask);
+        }
 
         repository.deleteById(id);
     }
@@ -42,21 +44,29 @@ public class TaskService {
         if (task.getId() != null) {
             throw new IllegalArgumentException("Id is auto-generated, cannot be created manually");
         }
-        task = assignTaskToSprint(task);
+        assignTaskToSprint(task, task.getSprint().getId());
         return repository.save(task);
     }
 
-    public Task assignTaskToSprint(Task task) throws DataNotFoundException {
-        Sprint relatedSprint = sprintService.getSprintById(task.getSprint().getId());
+    @Transactional
+    public void assignTaskToSprint(Task task, Long sprintId) throws DataNotFoundException {
+        if (task.getSprint().getId() == null) {
+            task.setSprint(null);
+            return;
+        }
+        if (task.getId() != null) {
+            task = getTaskById(task.getId());
+        }
+        System.out.println(task);
+
+        Sprint relatedSprint = sprintService.getSprintById(sprintId);
         int pointsLeft = relatedSprint.getStoryPointsToSpend();
         if (pointsLeft - task.getStoryPoints() < 0) {
-            throw new NotEnoughPointsException("There is not enough points");
+            throw new NotEnoughPointsException("There is not enough points in sprint");
         }
         relatedSprint.getTasks().add(task);
         relatedSprint.setStoryPointsToSpend(pointsLeft - task.getStoryPoints());
         task.setSprint(relatedSprint);
-
-        return task;
     }
 
     @Transactional
@@ -64,7 +74,21 @@ public class TaskService {
         Task updatedTask = getTaskById(task.getId());
         updatedTask.setName(task.getName());
         updatedTask.setDescription(task.getDescription());
+
+        //Liczy różnice punktów między nową a starą wersją zadania
+        int pointsDifference = task.getStoryPoints() - updatedTask.getStoryPoints();
         updatedTask.setStoryPoints(task.getStoryPoints());
+
+        Sprint relatedSprint = updatedTask.getSprint();
+        if (relatedSprint != null) {
+            //Odejmuje różnice od aktualnej ilosci punktow w sprincie i sprawdza poprawność wyniku
+            int storyPointsInSprint = relatedSprint.getStoryPointsToSpend() - pointsDifference;
+            if (storyPointsInSprint < 0 || storyPointsInSprint > 50) {
+                throw new NotEnoughPointsException("There is not enough points in sprint");
+            }
+            relatedSprint.setStoryPointsToSpend(storyPointsInSprint);
+        }
+
         updatedTask.setProgress(task.getProgress());
         updatedTask.setPriority(task.getPriority());
         return updatedTask;

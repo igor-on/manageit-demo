@@ -14,7 +14,7 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@ToString(exclude = {"sprint"})
+@ToString()
 public class Task {
 
     @Id

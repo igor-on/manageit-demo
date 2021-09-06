@@ -2,8 +2,10 @@ package com.in.demo.manage.manageit.service;
 
 import com.in.demo.manage.manageit.error.DataNotFoundException;
 import com.in.demo.manage.manageit.error.InvalidDataException;
+import com.in.demo.manage.manageit.error.NotEnoughPointsException;
 import com.in.demo.manage.manageit.model.Project;
 import com.in.demo.manage.manageit.model.Sprint;
+import com.in.demo.manage.manageit.model.Task;
 import com.in.demo.manage.manageit.repository.SprintRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,7 +21,7 @@ public class SprintService {
     private final SprintRepository repository;
 
     public List<Sprint> getAllSprints() {
-        return repository.findAllSprints();
+        return repository.findAll();
     }
 
     public Sprint getSprintById(Long id) throws DataNotFoundException {
@@ -91,7 +93,19 @@ public class SprintService {
         updatedSprint.setName(sprint.getName());
         updatedSprint.setStartDate(sprint.getStartDate());
         updatedSprint.setEndDate(sprint.getEndDate());
-        updatedSprint.setStoryPointsToSpend(sprint.getStoryPointsToSpend());
+
+        //Znajduje wszystkie zadania w sprincie i sumuje ich story points
+        Integer spentPoints = updatedSprint.getTasks().stream()
+                .map(Task::getStoryPoints)
+                .reduce(0, Integer::sum);
+
+        //W trakcie aktualizacji odejmuje wydane już punkty od tych ustawionych przez użytkownika
+        int storyPointsToSpend = sprint.getStoryPointsToSpend() - spentPoints;
+        if (storyPointsToSpend < 0) {
+            throw new NotEnoughPointsException("You can't set this amount of story points, you've already spent more");
+        }
+        updatedSprint.setStoryPointsToSpend(storyPointsToSpend);
+
         return updatedSprint;
     }
 }
